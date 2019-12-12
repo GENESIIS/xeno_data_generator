@@ -9,23 +9,20 @@ import java.util.ArrayList;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.genesiis.testDataGenerator.Controller.DataGenerator;
+
 import com.genesiis.testDataGenerator.Repository.DataGenRepo;
 import com.genesiis.testDataGenerator.Service.DataGenService;
 
 @SpringBootApplication
 public class TestDataGeneratorApplication {
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws Exception {
 		SpringApplication.run(TestDataGeneratorApplication.class, args);
 		
 		DataGenService dataGenService = new DataGenService();
-		try {
-			dataGenService.extrctMetaData();
-		} catch (Exception e) {
-		
-			e.printStackTrace();
-		}
+	
+			dataGenService.generateData();
+			
 		
 	}
 

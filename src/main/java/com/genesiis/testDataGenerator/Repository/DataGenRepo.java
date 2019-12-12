@@ -12,7 +12,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.genesiis.testDataGenerator.Service.DataGenService;
+
+@Repository
 public class DataGenRepo {
+	
+	@Autowired
+	private JdbcTemplate template;
 	
 	public  List<Object> metaData() throws SQLException {
 		
@@ -24,7 +34,7 @@ public class DataGenRepo {
 	      
 	      Statement stmt = con.createStatement();
 	      
-	      String query = "Select * from xeno.TESTDATA";
+	      String query = "Select * from xeno.EMPPAYROLSUM";
 	    
 	      ResultSet rs = stmt.executeQuery(query);
 	      
@@ -39,6 +49,8 @@ public class DataGenRepo {
 	      metaData.add(resultSetMetaData.getColumnDisplaySize(i));
 	      metaData.add(resultSetMetaData.isAutoIncrement(i));
 	      metaData.add(resultSetMetaData.isNullable(i));
+	      metaData.add(resultSetMetaData.getPrecision(i));
+	      metaData.add(resultSetMetaData.getScale(i));
 	      
 	      metaDataList.add(metaData);
 	    	  
@@ -46,6 +58,31 @@ public class DataGenRepo {
 	      }
 		
 		return metaDataList;
+		
+	}
+	
+	
+	public void insertData(ArrayList input,ArrayList data) throws SQLException {
+		
+		 ArrayList<Object> metaDataList = new ArrayList<>();
+	      DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
+	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
+	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
+	      
+	      DataGenService dataGen = new DataGenService(); 
+	      
+	     String args [] = dataGen.crtQueryStrng(input,data);
+	      
+	      System.out.println("DAO +++++++++++++++++++ "+args[0]);
+
+	      System.out.println("data ++++++++++++++++ "+args[1]);
+	      
+	      Statement stmt = con.createStatement();
+	      
+	      String query = "INSERT INTO xeno.EMPPAYROLSUM("+args[0]+")VALUES("+args[1]+")";
+	    
+	      stmt.executeUpdate(query);
+	   
 		
 	}
 
