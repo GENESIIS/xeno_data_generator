@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 import org.springframework.stereotype.Repository;
 
 import com.genesiis.testDataGenerator.Service.DataGenService;
@@ -22,12 +24,11 @@ import com.genesiis.testDataGenerator.Service.DataGenService;
 public class DataGenRepo {
 	
 	@Autowired
-	private JdbcTemplate template;
+	private JdbcTemplate jdbcTemplate;
 	
 	public  List<Object> metaData() throws SQLException {
 		
 		  ArrayList<Object> metaDataList = new ArrayList<>();
-	      DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
 	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
 	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
 	 
@@ -61,11 +62,41 @@ public class DataGenRepo {
 		
 	}
 	
+	public List<Object> getMetaData() throws SQLException{
+		
+		 ArrayList<Object> metaDataList = new ArrayList<>();
+		String query = "Select * from xeno.EMPPAYROLSUM";
+		ResultSet rs = null;
+		ResultSetMetaData rowMetaData = rs.getMetaData();
+		
+		//SqlRowSetMetaData rowMetaData = rs.getMetaData();
+		
+		 for(int i =1;i<rowMetaData.getColumnCount()+1;i++) {
+	    	  
+		      ArrayList<Object> metaData = new ArrayList<>();
+		      
+		      metaData.add(rowMetaData.getColumnName(i));
+		      metaData.add(rowMetaData.getColumnTypeName(i));
+		      metaData.add(rowMetaData.getColumnDisplaySize(i));
+		      metaData.add(((ResultSetMetaData) rowMetaData).isAutoIncrement(i));
+		      metaData.add(((ResultSetMetaData) rowMetaData).isNullable(i));
+		      metaData.add(rowMetaData.getPrecision(i));
+		      metaData.add(rowMetaData.getScale(i));
+		      
+		      metaDataList.add(metaData);
+		    	  
+		    	  
+		      }
+		
+		
+
+			return metaDataList;
+		
+	}
 	
 	public void insertData(ArrayList input,ArrayList data) throws SQLException {
 		
-		 ArrayList<Object> metaDataList = new ArrayList<>();
-	      DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
+		  ArrayList<Object> metaDataList = new ArrayList<>();
 	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
 	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
 	      
