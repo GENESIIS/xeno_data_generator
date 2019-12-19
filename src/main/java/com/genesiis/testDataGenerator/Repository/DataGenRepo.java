@@ -1,120 +1,25 @@
-/*
- * 20191209 NJ XENO-94 init and added code to extract table meta data
- * */
+/**
+ * @author nipuna
+ *20191216 NJ XENO-97 - init 
+ */
 package com.genesiis.testDataGenerator.Repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 import org.springframework.stereotype.Repository;
 
-import com.genesiis.testDataGenerator.Service.DataGenService;
-
 @Repository
-public class DataGenRepo {
+public interface DataGenRepo{
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	public List<Object> getTbleMetaData();
 	
-	public  List<Object> metaData() throws SQLException {
-		
-		  ArrayList<Object> metaDataList = new ArrayList<>();
-	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
-	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
-	 
-	      
-	      Statement stmt = con.createStatement();
-	      
-	      String query = "Select * from xeno.EMPPAYROLSUM";
-	    
-	      ResultSet rs = stmt.executeQuery(query);
-	      
-	      ResultSetMetaData resultSetMetaData = rs.getMetaData();
-	      
-	      for(int i =1;i<resultSetMetaData.getColumnCount()+1;i++) {
-	    	  
-	      ArrayList<Object> metaData = new ArrayList<>();
-	      
-	      metaData.add(resultSetMetaData.getColumnName(i));
-	      metaData.add(resultSetMetaData.getColumnTypeName(i));
-	      metaData.add(resultSetMetaData.getColumnDisplaySize(i));
-	      metaData.add(resultSetMetaData.isAutoIncrement(i));
-	      metaData.add(resultSetMetaData.isNullable(i));
-	      metaData.add(resultSetMetaData.getPrecision(i));
-	      metaData.add(resultSetMetaData.getScale(i));
-	      
-	      metaDataList.add(metaData);
-	    	  
-	    	  
-	      }
-		
-		return metaDataList;
-		
-	}
+	public void insrtTextData(String [] queryParams);
 	
-	public List<Object> getMetaData() throws SQLException{
-		
-		 ArrayList<Object> metaDataList = new ArrayList<>();
-		String query = "Select * from xeno.EMPPAYROLSUM";
-		ResultSet rs = null;
-		ResultSetMetaData rowMetaData = rs.getMetaData();
-		
-		//SqlRowSetMetaData rowMetaData = rs.getMetaData();
-		
-		 for(int i =1;i<rowMetaData.getColumnCount()+1;i++) {
-	    	  
-		      ArrayList<Object> metaData = new ArrayList<>();
-		      
-		      metaData.add(rowMetaData.getColumnName(i));
-		      metaData.add(rowMetaData.getColumnTypeName(i));
-		      metaData.add(rowMetaData.getColumnDisplaySize(i));
-		      metaData.add(((ResultSetMetaData) rowMetaData).isAutoIncrement(i));
-		      metaData.add(((ResultSetMetaData) rowMetaData).isNullable(i));
-		      metaData.add(rowMetaData.getPrecision(i));
-		      metaData.add(rowMetaData.getScale(i));
-		      
-		      metaDataList.add(metaData);
-		    	  
-		    	  
-		      }
-		
-		
-
-			return metaDataList;
-		
-	}
+	public void insertStatsDirLocalSize(String[]params,ArrayList<Object>data) throws Exception;
 	
-	public void insertData(ArrayList input,ArrayList data) throws SQLException {
-		
-		  ArrayList<Object> metaDataList = new ArrayList<>();
-	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
-	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
-	      
-	      DataGenService dataGen = new DataGenService(); 
-	      
-	     String args [] = dataGen.crtQueryStrng(input,data);
-	      
-	      System.out.println("DAO +++++++++++++++++++ "+args[0]);
-
-	      System.out.println("data ++++++++++++++++ "+args[1]);
-	      
-	      Statement stmt = con.createStatement();
-	      
-	      String query = "INSERT INTO xeno.EMPPAYROLSUM("+args[0]+")VALUES("+args[1]+")";
-	    
-	      stmt.executeUpdate(query);
-	   
-		
-	}
-
+	public void insertData(String [] queryParams) throws SQLException;
+	
+	
 }

@@ -1,17 +1,20 @@
 /**
- * 
+ *20191216 NJ XENO-94 - init and added methods to generate test data according to datatypes
  */
-package com.genesiis.testDataGenerator.Service;
+package com.genesiis.testDataGenerator.Service.impl;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.stereotype.Component;
+
 /**
  * @author nipuna
  *
  */
+@Component
 public class DataGenTypes {
 	
 	static Random r;
@@ -56,9 +59,7 @@ public class DataGenTypes {
 
   		// Construct a date
   		dt = new Date(ms);
-  		
-  		System.out.println("date is : "+dt);
-		
+  
 		return dt;
 	}
 	
