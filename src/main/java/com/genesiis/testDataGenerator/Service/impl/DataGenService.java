@@ -140,7 +140,71 @@ public class DataGenService implements TestDataService{
 	}
 	
 	@Override
-	public Object[] crtQueryStrng(ArrayList params,ArrayList values) {
+	public String[] crtQueryStrng(ArrayList params,ArrayList values) {
+		
+	      StringBuilder str = new StringBuilder();
+	      StringBuilder str1 = new StringBuilder();
+	      
+	      for(int i = 0;i<params.size();i++) {
+	    	 
+	    	 
+	    	  str.append(params.get(i));
+	    	  if(i<params.size()-1) {
+	    		  str.append(",");
+	    	  }
+	      }
+	      int b = 0;
+	      
+	      
+	      
+	     for(int k =0;k<values.size();k++) {
+	      str1.append("(");
+	      
+	      ArrayList<Object> arr =(ArrayList<Object>) values.get(k); 
+	      int arrSize=arr.size();
+	      for(int j =0;j<arrSize;j++) {
+	    
+	    		if(arr.get(1).toString() == "int" ||arr.get(1).toString() == "decimal") {
+	    			
+	    			
+	    			str1.append(arr.get(j));
+	    			
+	    		}else {
+	    			str1.append("\'");
+	    			str1.append(arr.get(j));
+	    			str1.append("\'");
+	    			
+	    		}
+	    		if(j != arr.size()-1) {
+	    		str1.append(",");
+	    		}
+	    	/*str1.append("?");
+	    	if(j != params.size()-1) {
+	    		str1.append(",");
+	    		}*/
+	    		
+	    		
+	    	
+	      }
+	      if(k == values.size()-1) {
+		      str1.append(")");
+		      }else {
+		    	  str1.append("),");  
+		      }
+	     } 
+	      
+	      
+	      
+	     String queryParam = str.toString();
+	     String vals = str1.toString();
+	     
+	     String [] QueryArgs = {queryParam,vals};
+	     
+		return QueryArgs;
+	}
+	
+	@Override
+	public Object[] crtBlkQryStrng(ArrayList params,ArrayList values) {
 		
 	      StringBuilder str = new StringBuilder();
 	      
@@ -215,6 +279,9 @@ public class DataGenService implements TestDataService{
 	@Override
 	public void executeDataInsert(String numOfLoops,String tableName) {
 		
+		ArrayList<Object>splittedList = new ArrayList<>();
+		Object [] QueryArgs = {};
+		
 		int loops = Integer.parseInt(numOfLoops);
 		
 		HashMap<String,String> columnData = getColumnData();
@@ -230,39 +297,39 @@ public class DataGenService implements TestDataService{
 		int threshold = 999;
 		int i = 0;
 		
-		ArrayList<Object>splittedList1 = new ArrayList<>();
+		ArrayList<String> columnDataArr = new ArrayList<>(columnData.keySet());
+		tableName=tableName.trim();
 		
 		if(genTestedData.size()>=1000) {
 			while(threshold<genTestedData.size()) {
-			ArrayList<Object> splittedList = new ArrayList(genTestedData.subList(threshold-999, threshold));
-		    splittedList1.add(splittedList);
-			//splittedList.add(genTestedData.subList(threshold-999, threshold));
-			
+			ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(threshold-999, threshold));
+		    splittedList.add(innrSplitdList);
 			 threshold = threshold+threshold;
 			}
+			QueryArgs= crtBlkQryStrng(columnDataArr,splittedList);
+			
+			ArrayList<Object> vals = (ArrayList<Object>) QueryArgs[1];
+			
+			for(int j =0;j<vals.size();j++) {
+				Object [] singleBulkArgs = {QueryArgs[0],vals.get(j)};
+				gen.insrtTextData(singleBulkArgs,tableName);
+			}
+			
+		}else {
+			
+			
+			String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,genTestedData);
+
+			gen.insrtData(QueryArg,tableName);
 		}
-		
-		
-		ArrayList<String> columnDataArr = new ArrayList<>(columnData.keySet());
-		
-		Object [] QueryArgs = crtQueryStrng(columnDataArr,splittedList1);
-		
-		
-		
-		tableName=tableName.trim();
-		
-		
-		ArrayList<Object> vals = (ArrayList<Object>) QueryArgs[1];
-		
-		for(int j =0;j<vals.size();j++) {
-			Object [] singleBulkArgs = {QueryArgs[0],vals.get(j)};
-			gen.insrtTextData(singleBulkArgs,tableName);
-		}
+	
 		
 		System.out.println("Data Generation was successfull");
 		System.out.println(genTestedData.size()+" rows were generated!!!!!");
 		
 	}
+
+	
 
 	
 

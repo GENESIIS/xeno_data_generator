@@ -103,10 +103,25 @@ public class DataGenRepoImpl implements DataGenRepo{
 		
 	}
 
+	
 
 	@Override
 	public void insertStatsDirLocalSize(String[] params, ArrayList<Object> data) throws Exception {
-		// TODO Auto-generated method stub
+		
+		
+	}
+
+
+	@Override
+	public void insrtData(String[] queryParams, String tableName) {
+		
+		String query = "INSERT INTO xeno."+tableName+"("+queryParams[0]+")VALUES"+queryParams[1]+"";
+		//String query = "INSERT INTO xeno.EMPPAYROLSUM(CMPNO, EMPNO, EPFNO, EMPNAME, BASICSAL, NOTHRS, DOTHRS, NOTAMT, DOTAMT, NPDAYS, NPAMT, TOTALLO, TOTDEDU, PAYEE, CRTON, CRTBY, MODON, MODBY=varchar)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
+		
+		
+		 
+		 JdbcTemplate.batchUpdate(query);
+
 		
 	}
 	

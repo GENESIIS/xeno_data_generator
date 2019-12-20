@@ -15,7 +15,7 @@ public interface DataGenRepo{
 	
 	public List<Object> getTbleMetaData();
 	
-	//public void insrtTextData(String [] queryParams,String tableName);
+	public void insrtData(String [] queryParams,String tableName);
 	
 	public void insrtTextData(Object [] queryParams,String tableName);
 	

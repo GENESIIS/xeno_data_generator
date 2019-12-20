@@ -17,6 +17,8 @@ public interface TestDataService {
 	//public String[] crtQueryStrng(ArrayList params,ArrayList values);
 	public Object[] crtQueryStrng(ArrayList params,ArrayList values);
 	
+	public Object[] crtBlkQryStrng(ArrayList params,ArrayList values); 
+	
 	public void executeDataInsert(String numOfLoops,String tableName);
 	
 	public HashMap<String, String> getColumnData();
