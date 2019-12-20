@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.genesiis.testDataGenerator.Repository.DataGenRepo;
-import com.genesiis.testDataGenerator.Repository.impl.DataGenRepoImpl;
 import com.genesiis.testDataGenerator.Service.TestDataService;
 
 @Service
@@ -56,7 +55,7 @@ public class DataGenService implements TestDataService{
 	}
 	
 	@Override
-	public List<Object> generateTstData() throws Exception {
+	public List<Object> generateTstData(int numOfLoops) throws Exception {
 		ArrayList<Object> metaData = (ArrayList<Object>) gen.getTbleMetaData();
 		
 		ArrayList<Object> genDataList = new ArrayList<>();
@@ -65,11 +64,10 @@ public class DataGenService implements TestDataService{
 		
 		int j = 0;
 	
-		while (j < 200) {
+		while (j < numOfLoops) {
 			ArrayList<Object> data = new ArrayList<>();
 			for (int i = 0; i < metaData.size(); i++) {
-				
-				ArrayList<Object> data1 = new ArrayList<>();
+
 
 				ArrayList<Object> innerArr = (ArrayList<Object>) metaData.get(i);
 				if ((boolean) innerArr.get(3)) {
@@ -135,17 +133,18 @@ public class DataGenService implements TestDataService{
 			j++;
 			
 		}
-		System.out.println("gentDataList1 "+genDataList1);
+		
 		return genDataList1;
 	
 		
 	}
 	
 	@Override
-	public String[] crtQueryStrng(ArrayList params,ArrayList values) {
+	public Object[] crtQueryStrng(ArrayList params,ArrayList values) {
 		
 	      StringBuilder str = new StringBuilder();
-	      StringBuilder str1 = new StringBuilder();
+	      
+	      ArrayList<String> valueList = new ArrayList<>();
 	      
 	      for(int i = 0;i<params.size();i++) {
 	    	 
@@ -157,12 +156,17 @@ public class DataGenService implements TestDataService{
 	      }
 	      int b = 0;
 	      
+	     for(int m=0;m<values.size();m++) {
+	    	 
+	    	 StringBuilder str1 = new StringBuilder();
+	    	ArrayList<Object> arr1 = new ArrayList<>();
+	    	arr1 =(ArrayList) values.get(m);
 	      
+	     for(int k =0;k<arr1.size();k++) {
 	      
-	     for(int k =0;k<values.size();k++) {
 	      str1.append("(");
-	      
-	      ArrayList<Object> arr =(ArrayList<Object>) values.get(k); 
+	
+	      ArrayList<Object> arr =(ArrayList<Object>) arr1.get(k); 
 	      int arrSize=arr.size();
 	      for(int j =0;j<arrSize;j++) {
 	    
@@ -188,49 +192,75 @@ public class DataGenService implements TestDataService{
 	    		
 	    	
 	      }
-	      if(k == values.size()-1) {
+	      if(k == arr1.size()-1) {
 		      str1.append(")");
 		      }else {
 		    	  str1.append("),");  
 		      }
 	     } 
-	      
+	     String vals = str1.toString();
+	     valueList.add(vals);
+	     }  
 	      
 	      
 	     String queryParam = str.toString();
-	     String vals = str1.toString();
+	     String vals = "";
 	     
-	     String [] QueryArgs = {queryParam,vals};
+	     
+	     Object [] QueryArgs = {queryParam,valueList};
 	     
 		return QueryArgs;
 	}
 
 	@Override
-	public void executeDataInsert() {
+	public void executeDataInsert(String numOfLoops,String tableName) {
+		
+		int loops = Integer.parseInt(numOfLoops);
 		
 		HashMap<String,String> columnData = getColumnData();
 		
 		ArrayList<Object> genTestedData = null;
 		try {
-			genTestedData = (ArrayList<Object>) generateTstData();
+			genTestedData = (ArrayList<Object>) generateTstData(loops);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		int threshold = 999;
+		int i = 0;
+		
+		ArrayList<Object>splittedList1 = new ArrayList<>();
+		
+		if(genTestedData.size()>=1000) {
+			while(threshold<genTestedData.size()) {
+			ArrayList<Object> splittedList = new ArrayList(genTestedData.subList(threshold-999, threshold));
+		    splittedList1.add(splittedList);
+			//splittedList.add(genTestedData.subList(threshold-999, threshold));
+			
+			 threshold = threshold+threshold;
+			}
+		}
 		
 		
 		ArrayList<String> columnDataArr = new ArrayList<>(columnData.keySet());
 		
-		String [] QueryArgs = crtQueryStrng(columnDataArr,genTestedData);
+		Object [] QueryArgs = crtQueryStrng(columnDataArr,splittedList1);
 		
-		gen.insrtTextData(QueryArgs);
-		try {
-			//gen.insrtTextData(QueryArgs);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		
+		tableName=tableName.trim();
+		
+		
+		ArrayList<Object> vals = (ArrayList<Object>) QueryArgs[1];
+		
+		for(int j =0;j<vals.size();j++) {
+			Object [] singleBulkArgs = {QueryArgs[0],vals.get(j)};
+			gen.insrtTextData(singleBulkArgs,tableName);
 		}
+		
+		System.out.println("Data Generation was successfull");
+		System.out.println(genTestedData.size()+" rows were generated!!!!!");
 		
 	}
 

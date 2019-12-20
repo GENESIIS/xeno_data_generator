@@ -39,8 +39,7 @@ public class DataGenTypes {
 	//generate values for columns having the datatype int
 	public int getInt() {
 		int random = (int)(Math.random()*50+1);
-      	System.out.println("generated int : "+random);
-		
+    
 		return random;
 		
 	}

@@ -9,38 +9,23 @@
  */
 package com.genesiis.testDataGenerator.Repository.impl;
 
-import java.nio.file.attribute.AclEntry.Builder;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.genesiis.testDataGenerator.Repository.DataGenRepo;
 import com.genesiis.testDataGenerator.Service.impl.DataGenService;
-import com.genesiis.testDataGenerator.config.ConfigData;
 
 @Repository
 public class DataGenRepoImpl implements DataGenRepo{
@@ -106,13 +91,13 @@ public class DataGenRepoImpl implements DataGenRepo{
 		
 	}
 	@Override
-	public void insrtTextData(String[]args) {
-		
-		String query = "INSERT INTO xeno.EMPPAYROLSUM("+args[0]+")VALUES"+args[1]+"";
+	public void insrtTextData(Object[]args,String tableName) {
+	
+		String vals = args[1].toString();
+		String query= "INSERT INTO xeno."+tableName+"("+args[0].toString()+")VALUES"+vals+"";
 		//String query = "INSERT INTO xeno.EMPPAYROLSUM(CMPNO, EMPNO, EPFNO, EMPNAME, BASICSAL, NOTHRS, DOTHRS, NOTAMT, DOTAMT, NPDAYS, NPAMT, TOTALLO, TOTDEDU, PAYEE, CRTON, CRTBY, MODON, MODBY=varchar)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
 		
-		
-		 
+
 		 JdbcTemplate.batchUpdate(query);
 		
 		

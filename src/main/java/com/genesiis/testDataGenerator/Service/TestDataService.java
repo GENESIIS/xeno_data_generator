@@ -12,11 +12,12 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TestDataService {
 	
-	public List<Object> generateTstData() throws Exception;
+	public List<Object> generateTstData(int numOfLoops) throws Exception;
 	
-	public String[] crtQueryStrng(ArrayList params,ArrayList values);
+	//public String[] crtQueryStrng(ArrayList params,ArrayList values);
+	public Object[] crtQueryStrng(ArrayList params,ArrayList values);
 	
-	public void executeDataInsert();
+	public void executeDataInsert(String numOfLoops,String tableName);
 	
 	public HashMap<String, String> getColumnData();
 
