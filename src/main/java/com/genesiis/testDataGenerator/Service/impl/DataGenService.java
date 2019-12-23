@@ -300,11 +300,28 @@ public class DataGenService implements TestDataService{
 		ArrayList<String> columnDataArr = new ArrayList<>(columnData.keySet());
 		tableName=tableName.trim();
 		
+		double numberOfLoops = Math.ceil((double)genTestedData.size()/(double)threshold);
+		
+		int loop = (int)numberOfLoops;
+		int start = 0;
+		int end = threshold;
+		
 		if(genTestedData.size()>=1000) {
-			while(threshold<genTestedData.size()) {
-			ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(threshold-999, threshold));
-		    splittedList.add(innrSplitdList);
-			 threshold = threshold+threshold;
+			for(int j =0;j<loop;j++) {
+			
+			if(j == (loop - 1)) {
+				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, genTestedData.size()));
+				splittedList.add(innrSplitdList);
+			}else {
+				
+				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, end));
+				splittedList.add(innrSplitdList);
+			}
+				
+			
+			start = end;
+			end =end+end; 
+		 
 			}
 			QueryArgs= crtBlkQryStrng(columnDataArr,splittedList);
 			
