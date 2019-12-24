@@ -4,16 +4,16 @@
  */
 package com.genesiis.testDataGenerator.config;
 
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import javax.sql.DataSource;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 public class ConfigData {

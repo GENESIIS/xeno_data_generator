@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.genesiis</groupId>
-	<artifactId>testDataGenerator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>testDataGenerator</name>
+	<artifactId>TestData</artifactId>
+	<version>0.0.1</version>
+	<name>TestData</name>
 	<description>test data generator</description>
 
 	<properties>
