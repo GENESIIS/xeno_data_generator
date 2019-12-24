@@ -79,8 +79,6 @@ public class DataGenService implements TestDataService{
 					case "int":
 
 						data.add(dataGenTypes.getInt());
-						//data1.add(innerArr.get(1).toString());
-						//data.add(data1);
 						genDataList.add(data);
 						
 						break;
@@ -89,8 +87,6 @@ public class DataGenService implements TestDataService{
 
 						String generatedString = dataGenTypes.genVarchar();
 						data.add(generatedString);
-						//data1.add(innerArr.get(1).toString());
-						//data.add(data1);
 						genDataList.add(data);
 					
 						break;
@@ -98,8 +94,6 @@ public class DataGenService implements TestDataService{
 					case "datetime":
 
 						data.add(dataGenTypes.getDate());
-						//data1.add(innerArr.get(1).toString());
-						//data.add(data1);
 						genDataList.add(data);
 					
 						break;
@@ -107,8 +101,6 @@ public class DataGenService implements TestDataService{
 					case "char":
 
 						data.add(dataGenTypes.getChar());
-						//data1.add(innerArr.get(1).toString());
-						//data.add(data1);
 						genDataList.add(data);
 					
 						break;
@@ -116,8 +108,6 @@ public class DataGenService implements TestDataService{
 					case "decimal":
 
 						data.add(dataGenTypes.getDecimal(innerArr));
-						//data1.add(innerArr.get(1).toString());
-						//data.add(data1);
 						genDataList.add(data);
 					
 						break;
@@ -127,8 +117,6 @@ public class DataGenService implements TestDataService{
 				}
 
 			}
-			
-			//executeDataInsert(dataList);
 			genDataList1.add(data);
 			j++;
 			
@@ -290,7 +278,7 @@ public class DataGenService implements TestDataService{
 		try {
 			genTestedData = (ArrayList<Object>) generateTstData(loops);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		

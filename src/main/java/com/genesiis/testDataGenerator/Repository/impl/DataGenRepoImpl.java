@@ -70,89 +70,29 @@ public class DataGenRepoImpl implements DataGenRepo{
 		});
 
 	}
-	
-	
-	public void insertData(String[]args) throws SQLException {
-		
-		  ArrayList<Object> metaDataList = new ArrayList<>();
-	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
-	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
-	      
-	      DataGenService dataGen = new DataGenService(); 
-	      
-	     //String args [] = dataGen.crtQueryStrng(input,data);
-	      
-	      Statement stmt = con.createStatement();
-	      
-	      String query = "INSERT INTO xeno.EMPPAYROLSUM("+args[0]+")VALUES"+args[1]+"";
-	    
-	      stmt.executeUpdate(query);
-	   
-		
-	}
+
 	@Override
 	public void insrtTextData(Object[]args,String tableName) {
 	
 		String vals = args[1].toString();
 		String query= "INSERT INTO xeno."+tableName+"("+args[0].toString()+")VALUES"+vals+"";
-		//String query = "INSERT INTO xeno.EMPPAYROLSUM(CMPNO, EMPNO, EPFNO, EMPNAME, BASICSAL, NOTHRS, DOTHRS, NOTAMT, DOTAMT, NPDAYS, NPAMT, TOTALLO, TOTDEDU, PAYEE, CRTON, CRTBY, MODON, MODBY=varchar)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
-		
-
+	
 		 JdbcTemplate.batchUpdate(query);
 		
 		
 	}
 
-	
-
-	@Override
-	public void insertStatsDirLocalSize(String[] params, ArrayList<Object> data) throws Exception {
-		
-		
-	}
 
 
 	@Override
 	public void insrtData(String[] queryParams, String tableName) {
 		
 		String query = "INSERT INTO xeno."+tableName+"("+queryParams[0]+")VALUES"+queryParams[1]+"";
-		//String query = "INSERT INTO xeno.EMPPAYROLSUM(CMPNO, EMPNO, EPFNO, EMPNAME, BASICSAL, NOTHRS, DOTHRS, NOTAMT, DOTAMT, NPDAYS, NPAMT, TOTALLO, TOTDEDU, PAYEE, CRTON, CRTBY, MODON, MODBY=varchar)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
 		
-		
-		 
 		 JdbcTemplate.batchUpdate(query);
 
 		
 	}
-	
-/*	@Transactional
-	public void insertStatsDirLocalSize(String[]params,ArrayList<Object>data) throws Exception {
-		//NamedParameterJdbcTemplate jdbcNamesTpl = new NamedParameterJdbcTemplate(this.jdbcTemplate);
-		
-		
-		
-		List<MapSqlParameterSource> batchArgs = new ArrayList<>();
 
-		for (Entry<Long, Long> e : dirLocalSize.entrySet()) {
-			MapSqlParameterSource parameters = new MapSqlParameterSource();
-			parameters.addValue("node_id", e.getKey());
-			parameters.addValue("local_size", e.getValue());
-			batchArgs.add(parameters);
-		}
-		
-		for(int i = 0;i<params.length;i++) {
-			
-			MapSqlParameterSource parameters = new MapSqlParameterSource();
-			parameters.addValue(params[i], data.get(i));
-			batchArgs.add(parameters);
-			
-			
-		}
-		
-		SqlParameterSource [] listRecords = SqlParameterSourceUtils.createBatch(data);
-		
-		String query = "INSERT INTO xeno.EMPPAYROLSUM("+params[0]+")VALUES(: CMPNO: EMPNO: EPFNO: EMPNAME: BASICSAL: NOTHRS: DOTHRS: NOTAMT: DOTAMT: NPDAYS: NPAMT: TOTALLO: TOTDEDU: PAYEE: CRTON: CRTBY: MODON: MODBY)";
-		namedParameterJdbcTemplate.batchUpdate(query, batchArgs.toArray(new MapSqlParameterSource[params.length]));
-	}*/
 
 }

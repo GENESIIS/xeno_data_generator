@@ -18,10 +18,6 @@ public interface DataGenRepo{
 	public void insrtData(String [] queryParams,String tableName);
 	
 	public void insrtTextData(Object [] queryParams,String tableName);
-	
-	public void insertStatsDirLocalSize(String[]params,ArrayList<Object>data) throws Exception;
-	
-	public void insertData(String [] queryParams) throws SQLException;
-	
+
 	
 }
