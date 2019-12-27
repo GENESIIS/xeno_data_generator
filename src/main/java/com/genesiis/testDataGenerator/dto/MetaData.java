@@ -1,14 +1,16 @@
 package com.genesiis.testDataGenerator.dto;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope("prototype")
 public class MetaData {
 	
 	private String columnName;
 	private String columnTypeName;
 	private int columnSize;
-	private boolean isAutoIncrement;
+	private String isAutoIncrement;
 	private int isNullable;
 	private int precision;
 	private int scale;
@@ -31,10 +33,10 @@ public class MetaData {
 	public void setColumnSize(int columnSize) {
 		this.columnSize = columnSize;
 	}
-	public boolean isAutoIncrement() {
+	public String isAutoIncrement() {
 		return isAutoIncrement;
 	}
-	public void setAutoIncrement(boolean isAutoIncrement) {
+	public void setAutoIncrement(String isAutoIncrement) {
 		this.isAutoIncrement = isAutoIncrement;
 	}
 	public int getIsNullable() {

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Repository;
 import com.genesiis.testDataGenerator.Repository.DataGenRepo;
 import com.genesiis.testDataGenerator.Service.impl.DataGenService;
 import com.genesiis.testDataGenerator.dto.DbMetaData;
+import com.genesiis.testDataGenerator.dto.MetaData;
 
 @Repository
 public class DataGenRepoImpl implements DataGenRepo{
@@ -39,6 +40,9 @@ public class DataGenRepoImpl implements DataGenRepo{
 	private JdbcTemplate JdbcTemplate;
 	@Autowired
 	private DbMetaData dbMData;
+	
+	@Autowired
+	private MetaData columnMeta;
 	
 	
 
@@ -111,7 +115,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 	     // Statement stmt = con.createStatement();
 	      
 	     DatabaseMetaData dbm = con.getMetaData();
-	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "EMPLOYEE");
+	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "DEPARTMENT");
 	    // ResultSet rs1 = dbm.getExportedKeys(null, "XENO", "DEPARTMENT");
 	    
 	     
@@ -125,6 +129,35 @@ public class DataGenRepoImpl implements DataGenRepo{
 	     // stmt.executeUpdate(query);
 
 	     return dbMetaData;
+	}
+
+	@Override
+	public List<MetaData> retColumnData(ArrayList<DbMetaData>dbMeta) throws SQLException {
+		
+		System.out.println(dbMeta);
+		System.out.println("WEWE");
+		
+		 ArrayList<MetaData> tableMeta = new ArrayList<>();
+	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
+	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
+	      
+	     String tableName = dbMData.getTableName();
+	      
+	     DatabaseMetaData dbm = con.getMetaData();
+	     ResultSet rs = dbm.getColumns(null, "XENO", tableName, null);
+
+	     while(rs.next()) {
+	    	 columnMeta =new MetaData(); 
+	    	 columnMeta.setColumnName(rs.getString("COLUMN_NAME"));
+	    	 columnMeta.setColumnTypeName(rs.getString("TYPE_NAME"));
+	    	 columnMeta.setColumnSize(rs.getInt("COLUMN_SIZE"));
+	    	 columnMeta.setAutoIncrement(rs.getString("IS_AUTOINCREMENT"));
+	    	 columnMeta.setIsNullable(rs.getInt("NULLABLE"));
+	    	tableMeta.add(columnMeta);
+	     }
+		
+		
+		return tableMeta;
 	}
 
 

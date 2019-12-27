@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.genesiis.testDataGenerator.dto.DbMetaData;
+
 @Service
 public interface TestDataService {
 	
@@ -24,6 +26,7 @@ public interface TestDataService {
 	
 	public HashMap<String, String> getColumnData();
 	
-	public void getForiegnKeys() throws SQLException;
+	public ArrayList<DbMetaData> getForiegnKeys() throws SQLException;
+	public void getFKeyMeta() throws SQLException;
 
 }

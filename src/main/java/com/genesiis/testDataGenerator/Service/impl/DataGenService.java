@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.genesiis.testDataGenerator.Repository.DataGenRepo;
 import com.genesiis.testDataGenerator.Service.TestDataService;
 import com.genesiis.testDataGenerator.dto.DbMetaData;
+import com.genesiis.testDataGenerator.dto.MetaData;
 
 @Service
 public class DataGenService implements TestDataService{
@@ -338,13 +339,23 @@ public class DataGenService implements TestDataService{
 	}
 
 	@Override
-	public void getForiegnKeys() throws SQLException {
+	public ArrayList<DbMetaData> getForiegnKeys() throws SQLException {
 		ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys();
 		
 		for (DbMetaData dbMetaData : dbMetaObj) {
 			System.out.println("column Name : "+dbMetaData.getColumnName());
 			System.out.println("table Name : "+dbMetaData.getTableName());
 		}
+		
+		return dbMetaObj;
+	}
+
+	@Override
+	public void getFKeyMeta() throws SQLException {
+		
+		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
+		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.retColumnData(dbMetaObj);
+		
 		
 		
 	}
