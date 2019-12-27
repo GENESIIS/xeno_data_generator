@@ -4,6 +4,8 @@
 package com.genesiis.testDataGenerator.Service.impl;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -44,7 +46,7 @@ public class DataGenTypes {
 		
 	}
 	//generate values for columns having the datatype dateTime
-	public Date getDate() {
+	public Date getDateTime() {
 		
   		Date dt;
   		long ms;
@@ -61,7 +63,26 @@ public class DataGenTypes {
   
 		return dt;
 	}
-	
+	//generate values for columns having the datatype dateTime
+		public java.util.Date getDate() throws ParseException {
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			
+	  		Date dt;
+	  		long ms;
+	  		// Get a new random instance, seeded from the clock
+	  		r = new Random();
+
+	  		// Get an Epoch value roughly between 1940 and 2010
+	  		// -946771200000L = January 1, 1940
+	  		// Add up to 70 years to it (using modulus on the next long)
+	  		ms = -946771200000L + (Math.abs(r.nextLong()) % (70L * 365 * 24 * 60 * 60 * 1000));
+
+	  		// Construct a date
+	  		dt = new Date(ms);
+	  		
+			return formatter.parse(formatter.format(dt));
+		}
 	public char getChar() {
 		
   		char chr = (char)(r.nextInt(26) + 'a');

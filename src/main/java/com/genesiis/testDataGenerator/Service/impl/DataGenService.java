@@ -25,6 +25,8 @@ import com.genesiis.testDataGenerator.Service.TestDataService;
 import com.genesiis.testDataGenerator.dto.DbMetaData;
 import com.genesiis.testDataGenerator.dto.MetaData;
 
+import ch.qos.logback.classic.db.names.TableName;
+
 @Service
 public class DataGenService implements TestDataService{
 	
@@ -96,6 +98,13 @@ public class DataGenService implements TestDataService{
 						break;
 
 					case "datetime":
+
+						data.add(dataGenTypes.getDateTime());
+						genDataList.add(data);
+					
+						break;
+						
+					case "date":
 
 						data.add(dataGenTypes.getDate());
 						genDataList.add(data);
@@ -351,10 +360,26 @@ public class DataGenService implements TestDataService{
 	}
 
 	@Override
-	public void getFKeyMeta() throws SQLException {
+	public void getFKeyMeta() throws SQLException,Exception {
 		
 		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
 		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.retColumnData(dbMetaObj);
+		
+		DbMetaData arr = dbMetaObj.get(0);
+		String tbleName =arr.getTableName();
+		
+		ArrayList<String> columnDataArr = new ArrayList<>();
+		for (MetaData metaData : columnData) {
+			columnDataArr.add(metaData.getColumnName());
+		}
+		ArrayList<Object> genTestedData = (ArrayList<Object>) generateTstData(columnDataArr.size());
+	
+		String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,genTestedData);
+		
+		gen.insrtData(QueryArg,tbleName);
+		
+		System.out.println("qwq");
+		
 		
 		
 		

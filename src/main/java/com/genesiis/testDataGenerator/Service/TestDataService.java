@@ -27,6 +27,6 @@ public interface TestDataService {
 	public HashMap<String, String> getColumnData();
 	
 	public ArrayList<DbMetaData> getForiegnKeys() throws SQLException;
-	public void getFKeyMeta() throws SQLException;
+	public void getFKeyMeta() throws SQLException,Exception;
 
 }

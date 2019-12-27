@@ -49,7 +49,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 	@Override
 	public List<Object> getTbleMetaData(){
 		
-		String query = "Select * from xeno.EMPPAYROLSUM";
+		String query = "Select * from xeno.COMPANY";
 
 		return  namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<Object>>() {
 
