@@ -3,6 +3,7 @@
  *  */
 package com.genesiis.testDataGenerator.Service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,5 +23,7 @@ public interface TestDataService {
 	public void executeDataInsert(String numOfLoops,String tableName);
 	
 	public HashMap<String, String> getColumnData();
+	
+	public void getForiegnKeys() throws SQLException;
 
 }

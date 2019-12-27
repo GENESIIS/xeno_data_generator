@@ -5,6 +5,8 @@
  * */
 package com.genesiis.testDataGenerator.Service.impl;
 
+import java.sql.SQLException;
+
 /**
  * @author nipuna
  *
@@ -331,6 +333,12 @@ public class DataGenService implements TestDataService{
 		
 		System.out.println("Data Generation was successfull");
 		System.out.println(genTestedData.size()+" rows were generated!!!!!");
+		
+	}
+
+	@Override
+	public void getForiegnKeys() throws SQLException {
+		gen.getKeys();
 		
 	}
 

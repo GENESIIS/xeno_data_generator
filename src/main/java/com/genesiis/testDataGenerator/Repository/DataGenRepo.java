@@ -18,6 +18,8 @@ public interface DataGenRepo{
 	public void insrtData(String [] queryParams,String tableName);
 	
 	public void insrtTextData(Object [] queryParams,String tableName);
+	
+	public void getKeys() throws SQLException;
 
 	
 }

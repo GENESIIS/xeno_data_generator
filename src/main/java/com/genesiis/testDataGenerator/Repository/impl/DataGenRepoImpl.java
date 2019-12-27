@@ -10,6 +10,7 @@
 package com.genesiis.testDataGenerator.Repository.impl;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -90,6 +91,32 @@ public class DataGenRepoImpl implements DataGenRepo{
 		String query = "INSERT INTO xeno."+tableName+"("+queryParams[0]+")VALUES"+queryParams[1]+"";
 		
 		 JdbcTemplate.batchUpdate(query);
+
+		
+	}
+	
+	public void getKeys() throws SQLException {
+		
+		  ArrayList<Object> metaDataList = new ArrayList<>();
+	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
+	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
+	      
+	      DataGenService dataGen = new DataGenService(); 
+	      
+	     //String args [] = dataGen.crtQueryStrng(input,data);
+	      
+	     // Statement stmt = con.createStatement();
+	      
+	     DatabaseMetaData dbm = con.getMetaData();
+	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "DEPARTMENT");
+	    // ResultSet rs1 = dbm.getExportedKeys(null, "XENO", "DEPARTMENT");
+	     
+	     while(rs.next()) {
+	    	// System.out.println(rs.getString(8));
+	    	 System.out.println("printing foreign key column "+rs.getString(7));
+	     }
+	    
+	     // stmt.executeUpdate(query);
 
 		
 	}
