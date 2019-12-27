@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 
 import com.genesiis.testDataGenerator.Repository.DataGenRepo;
 import com.genesiis.testDataGenerator.Service.impl.DataGenService;
+import com.genesiis.testDataGenerator.dto.DbMetaData;
 
 @Repository
 public class DataGenRepoImpl implements DataGenRepo{
@@ -36,6 +37,8 @@ public class DataGenRepoImpl implements DataGenRepo{
 	
 	@Autowired
 	private JdbcTemplate JdbcTemplate;
+	@Autowired
+	private DbMetaData dbMData;
 	
 	
 
@@ -95,9 +98,9 @@ public class DataGenRepoImpl implements DataGenRepo{
 		
 	}
 	
-	public void getKeys() throws SQLException {
+	public List<DbMetaData> getKeys() throws SQLException {
 		
-		  ArrayList<Object> metaDataList = new ArrayList<>();
+		  ArrayList<DbMetaData> dbMetaData = new ArrayList<>();
 	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
 	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
 	      
@@ -108,17 +111,20 @@ public class DataGenRepoImpl implements DataGenRepo{
 	     // Statement stmt = con.createStatement();
 	      
 	     DatabaseMetaData dbm = con.getMetaData();
-	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "DEPARTMENT");
+	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "EMPLOYEE");
 	    // ResultSet rs1 = dbm.getExportedKeys(null, "XENO", "DEPARTMENT");
+	    
 	     
 	     while(rs.next()) {
-	    	// System.out.println(rs.getString(8));
-	    	 System.out.println("printing foreign key column "+rs.getString(7));
+	    	dbMData.setColumnName(rs.getString("FKCOLUMN_NAME"));
+	    	dbMData.setTableName(rs.getString("PKTABLE_NAME"));
+	    	dbMetaData.add(dbMData);
 	     }
+		
 	    
 	     // stmt.executeUpdate(query);
 
-		
+	     return dbMetaData;
 	}
 
 

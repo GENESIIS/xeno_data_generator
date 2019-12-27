@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.genesiis.testDataGenerator.dto.DbMetaData;
+
 @Repository
 public interface DataGenRepo{
 	
@@ -19,7 +21,7 @@ public interface DataGenRepo{
 	
 	public void insrtTextData(Object [] queryParams,String tableName);
 	
-	public void getKeys() throws SQLException;
+	public List<DbMetaData> getKeys() throws SQLException;
 
 	
 }
