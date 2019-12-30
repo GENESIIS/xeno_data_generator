@@ -25,6 +25,8 @@ public interface DataGenRepo{
 	public List<DbMetaData> getKeys() throws SQLException;
 	
 	public List<MetaData> retColumnData(ArrayList<DbMetaData> dbMeta) throws SQLException;
+	
+	public List<MetaData> getTbleMetaData(String tableName);
 
 	
 }

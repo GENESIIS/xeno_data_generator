@@ -29,6 +29,7 @@ import com.genesiis.testDataGenerator.Repository.DataGenRepo;
 import com.genesiis.testDataGenerator.Service.impl.DataGenService;
 import com.genesiis.testDataGenerator.dto.DbMetaData;
 import com.genesiis.testDataGenerator.dto.MetaData;
+import com.sun.org.apache.bcel.internal.generic.CPInstruction;
 
 @Repository
 public class DataGenRepoImpl implements DataGenRepo{
@@ -49,7 +50,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 	@Override
 	public List<Object> getTbleMetaData(){
 		
-		String query = "Select * from xeno.COMPANY";
+		String query = "Select * from xeno.TOWN";
 
 		return  namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<Object>>() {
 
@@ -72,6 +73,49 @@ public class DataGenRepoImpl implements DataGenRepo{
 				      metaDataList.add(metaData);
 	  
 				      }
+				
+				return metaDataList;
+			}
+		});
+
+	}
+	
+	@Override
+	public List<MetaData> getTbleMetaData(String tbleName){
+		
+		String tableName = dbMData.getTableName();
+		
+		String query = "Select * from xeno."+tableName+"";
+		
+
+		return  namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<MetaData>>() {
+
+			@Override
+			public List<MetaData> extractData(ResultSet rs) throws SQLException {
+				
+				Connection con = null;
+				try {
+					con = JdbcTemplate.getDataSource().getConnection();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				
+				DatabaseMetaData dbm = con.getMetaData();
+				ArrayList<MetaData> metaDataList = new ArrayList<>();
+				 rs = dbm.getColumns(null, "XENO", tableName, null);
+				 
+				 
+				 while(rs.next()) {
+			    	 columnMeta =new MetaData(); 
+			    	 columnMeta.setColumnName(rs.getString("COLUMN_NAME"));
+			    	 columnMeta.setColumnTypeName(rs.getString("TYPE_NAME"));
+			    	 columnMeta.setColumnSize(rs.getInt("COLUMN_SIZE"));
+			    	 columnMeta.setAutoIncrement(rs.getString("IS_AUTOINCREMENT"));
+			    	 columnMeta.setIsNullable(rs.getInt("NULLABLE"));
+			    	 metaDataList.add(columnMeta);
+			     }
 				
 				return metaDataList;
 			}
@@ -107,6 +151,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 		  ArrayList<DbMetaData> dbMetaData = new ArrayList<>();
 	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
 	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
+	      Connection con1 = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
 	      
 	      DataGenService dataGen = new DataGenService(); 
 	      
@@ -115,7 +160,8 @@ public class DataGenRepoImpl implements DataGenRepo{
 	     // Statement stmt = con.createStatement();
 	      
 	     DatabaseMetaData dbm = con.getMetaData();
-	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "DEPARTMENT");
+	     DatabaseMetaData dbm1 = con1.getMetaData();
+	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "TESTDATA");
 	    // ResultSet rs1 = dbm.getExportedKeys(null, "XENO", "DEPARTMENT");
 	    
 	     
@@ -124,7 +170,15 @@ public class DataGenRepoImpl implements DataGenRepo{
 	    	dbMData.setTableName(rs.getString("PKTABLE_NAME"));
 	    	dbMetaData.add(dbMData);
 	     }
-		
+	     //rs.close();
+	     
+	     ResultSet rs1 = dbm1.getImportedKeys(null, "XENO", "TOWN");
+	   
+	     while(rs1.next()) {
+	    	 dbMData.setPrimaryKey(rs1.getString("PKCOLUMN_NAME"));
+		    	dbMData.setTableName(rs1.getString("PKTABLE_NAME"));
+		    	dbMetaData.add(dbMData);
+	     }
 	    
 	     // stmt.executeUpdate(query);
 

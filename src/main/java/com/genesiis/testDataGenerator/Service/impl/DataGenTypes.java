@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.assertj.core.util.DateUtil;
 import org.springframework.stereotype.Component;
 
 /**
@@ -81,7 +82,7 @@ public class DataGenTypes {
 	  		// Construct a date
 	  		dt = new Date(ms);
 	  		
-			return formatter.parse(formatter.format(dt));
+			return dt;
 		}
 	public char getChar() {
 		

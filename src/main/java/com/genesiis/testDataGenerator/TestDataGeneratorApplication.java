@@ -47,8 +47,8 @@ public class TestDataGeneratorApplication implements CommandLineRunner{
 			
 			System.out.println("number of loops are "+numOfLoops);
 			
-			getTestDataService().getFKeyMeta();
-			getTestDataService().executeDataInsert(numOfLoops,tableName);
+			//getTestDataService().removeFColumn();
+			getTestDataService().mainExecutor(numOfLoops,tableName);
 		
 	}
 	

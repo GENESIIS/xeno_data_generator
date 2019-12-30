@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -360,33 +361,168 @@ public class DataGenService implements TestDataService{
 	}
 
 	@Override
-	public void getFKeyMeta() throws SQLException,Exception {
+	public String[] getFKeyMeta() throws SQLException,Exception {
 		
 		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
-		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.retColumnData(dbMetaObj);
+		DbMetaData dbMeta = dbMetaObj.get(0);
+		String tableName = dbMeta.getTableName();
+		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
 		
 		DbMetaData arr = dbMetaObj.get(0);
 		String tbleName =arr.getTableName();
 		
 		ArrayList<String> columnDataArr = new ArrayList<>();
 		for (MetaData metaData : columnData) {
-			columnDataArr.add(metaData.getColumnName());
+			
+			if(!metaData.isAutoIncrement().equals("YES")) {
+				columnDataArr.add(metaData.getColumnName());
+			}
 		}
 		ArrayList<Object> genTestedData = (ArrayList<Object>) generateTstData(columnDataArr.size());
 	
 		String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,genTestedData);
 		
-		gen.insrtData(QueryArg,tbleName);
-		
-		System.out.println("qwq");
-		
-		
-		
+		return QueryArg;
 		
 	}
 
+	public Map<String, ArrayList<Object>> removeFColumn(int numOfLoops) {
+		
+		Map<String, ArrayList<Object>>splitMap = new LinkedHashMap<>();
+		ArrayList<Object>fKeyCol = new ArrayList<>();
+		ArrayList<Object>norCol = new ArrayList<>();
+		
+		try {
+			ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
+		
+			String tableName = "ss";
+			ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
+			
+			
+			 ArrayList<Object>testData = (ArrayList<Object>) genTestDtaMulti(numOfLoops);
+			 ArrayList<Object>innerArr = new ArrayList<>();
+			 for(int i =0;i<testData.size();i++) {
+				 
+			 }
+			 
+			 
+			System.out.println("edwew");
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return splitMap;
+	}
 	
+	public void mainExecutor(String numOfLoops,String mainTable) throws Exception {
+		
+		try {
+			ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
+			
+			int loops=Integer.parseInt(numOfLoops);
+			
+			if(!(dbMetaObj == null || dbMetaObj.isEmpty())) {
+				DbMetaData arr = dbMetaObj.get(0);
+				String tableName =arr.getTableName();
+				LinkedHashMap<String, ArrayList<Object>> result = (LinkedHashMap<String, ArrayList<Object>>) removeFColumn(loops);
+				String[]queryString = getFKeyMeta();
+				gen.insrtData(queryString, tableName);
+			}else {
+				executeDataInsert(numOfLoops,mainTable);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
+	@Override
+	public void removeFColumn() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List<Object> genTestDtaMulti(int numOfLoops) throws Exception {
+		ArrayList<Object> metaData = (ArrayList<Object>) gen.getTbleMetaData();
+		
+		ArrayList<Object> genDataList = new ArrayList<>();
+		ArrayList<Object> genDataList1 = new ArrayList<>();
+		
+		
+		int j = 0;
 	
+		while (j < numOfLoops) {
+			ArrayList<Object> data = new ArrayList<>();
+			for (int i = 0; i < metaData.size(); i++) {
+
+
+				ArrayList<Object> innerArr = (ArrayList<Object>) metaData.get(i);
+				
+					switch (innerArr.get(1).toString()) {
+
+					case "int":
+
+						data.add(dataGenTypes.getInt());
+						genDataList.add(data);
+						
+						break;
+
+					case "varchar":
+
+						String generatedString = dataGenTypes.genVarchar();
+						data.add(generatedString);
+						genDataList.add(data);
+					
+						break;
+
+					case "datetime":
+
+						data.add(dataGenTypes.getDateTime());
+						genDataList.add(data);
+					
+						break;
+						
+					case "date":
+
+						data.add(dataGenTypes.getDate());
+						genDataList.add(data);
+					
+						break;
+
+					case "char":
+
+						data.add(dataGenTypes.getChar());
+						genDataList.add(data);
+					
+						break;
+
+					case "decimal":
+
+						data.add(dataGenTypes.getDecimal(innerArr));
+						genDataList.add(data);
+					
+						break;
+
+					}
+					
+				
+
+			}
+			genDataList1.add(data);
+			j++;
+			
+		}
+		
+		return genDataList1;
+	
+		
+	}
 
 }
