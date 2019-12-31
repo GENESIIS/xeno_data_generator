@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -83,7 +84,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 	@Override
 	public List<MetaData> getTbleMetaData(String tbleName){
 		
-		String tableName = dbMData.getTableName();
+		String tableName = dbMData.getFkParentTblName();
 		
 		String query = "Select * from xeno."+tableName+"";
 		
@@ -166,19 +167,25 @@ public class DataGenRepoImpl implements DataGenRepo{
 	    
 	     
 	     while(rs.next()) {
-	    	dbMData.setColumnName(rs.getString("FKCOLUMN_NAME"));
-	    	dbMData.setTableName(rs.getString("PKTABLE_NAME"));
+	    	
+	    	dbMData = new DbMetaData();
+	    	
+	    	dbMData.setFkParentTable(rs.getString("FKCOLUMN_NAME"));
+	    	dbMData.setFkParentTblName(rs.getString("PKTABLE_NAME"));
+	    	
+
+		     ResultSet rs1 = dbm1.getPrimaryKeys(null, "XENO", dbMData.getFkParentTblName());
+		   
+		     while(rs1.next()) {
+		    	 dbMData.setPrimaryKey(rs1.getString("COLUMN_NAME"));
+			     dbMData.setPrimaryKTble(rs1.getString("TABLE_NAME"));
+			    	
+		     }
+	    	
 	    	dbMetaData.add(dbMData);
 	     }
 	     //rs.close();
 	     
-	     ResultSet rs1 = dbm1.getImportedKeys(null, "XENO", "TOWN");
-	   
-	     while(rs1.next()) {
-	    	 dbMData.setPrimaryKey(rs1.getString("PKCOLUMN_NAME"));
-		    	dbMData.setTableName(rs1.getString("PKTABLE_NAME"));
-		    	dbMetaData.add(dbMData);
-	     }
 	    
 	     // stmt.executeUpdate(query);
 
@@ -195,7 +202,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
 	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
 	      
-	     String tableName = dbMData.getTableName();
+	     String tableName = dbMData.getFkParentTblName();
 	      
 	     DatabaseMetaData dbm = con.getMetaData();
 	     ResultSet rs = dbm.getColumns(null, "XENO", tableName, null);
@@ -214,5 +221,5 @@ public class DataGenRepoImpl implements DataGenRepo{
 		return tableMeta;
 	}
 
-
+	
 }

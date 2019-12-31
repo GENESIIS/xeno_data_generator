@@ -13,6 +13,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.assertj.core.util.DateUtil;
 import org.springframework.stereotype.Component;
 
+import com.genesiis.testDataGenerator.dto.MetaData;
+
 /**
  * @author nipuna
  *
@@ -102,5 +104,16 @@ public class DataGenTypes {
 		return ThreadLocalRandom.current().nextLong(min, min * 10);
   		
 	}
+	
+	public long getDecimal(MetaData meta) {
+			
+	  		int precision = (int)meta.getPrecision();
+	  		int scale = (int)meta.getScale();
+	  		int num = precision-scale;
+	  		
+	  		long min = (long) Math.pow(10, num - 1);
+			return ThreadLocalRandom.current().nextLong(min, min * 10);
+	  		
+		}
 	
 }

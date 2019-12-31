@@ -353,8 +353,8 @@ public class DataGenService implements TestDataService{
 		ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys();
 		
 		for (DbMetaData dbMetaData : dbMetaObj) {
-			System.out.println("column Name : "+dbMetaData.getColumnName());
-			System.out.println("table Name : "+dbMetaData.getTableName());
+			System.out.println("column Name : "+dbMetaData.getFkParentTable());
+			System.out.println("table Name : "+dbMetaData.getFkParentTblName());
 		}
 		
 		return dbMetaObj;
@@ -365,11 +365,11 @@ public class DataGenService implements TestDataService{
 		
 		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
 		DbMetaData dbMeta = dbMetaObj.get(0);
-		String tableName = dbMeta.getTableName();
+		String tableName = dbMeta.getFkParentTblName();
 		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
 		
 		DbMetaData arr = dbMetaObj.get(0);
-		String tbleName =arr.getTableName();
+		String tbleName =arr.getFkParentTblName();
 		
 		ArrayList<String> columnDataArr = new ArrayList<>();
 		for (MetaData metaData : columnData) {
@@ -388,24 +388,55 @@ public class DataGenService implements TestDataService{
 
 	public Map<String, ArrayList<Object>> removeFColumn(int numOfLoops) {
 		
+
 		Map<String, ArrayList<Object>>splitMap = new LinkedHashMap<>();
 		ArrayList<Object>fKeyCol = new ArrayList<>();
 		ArrayList<Object>norCol = new ArrayList<>();
+		int indxOfPk = 0;
 		
 		try {
-			ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
-		
+			//ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
+			
+			ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys();
+			String pk = "";
+			
 			String tableName = "ss";
 			ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
+			ArrayList<Object>testData = (ArrayList<Object>) genTestDtaMulti(numOfLoops,columnData);
 			
 			
-			 ArrayList<Object>testData = (ArrayList<Object>) genTestDtaMulti(numOfLoops);
-			 ArrayList<Object>innerArr = new ArrayList<>();
-			 for(int i =0;i<testData.size();i++) {
+			for (DbMetaData dbMetaData : dbMetaObj) {
+				pk = dbMetaData.getPrimaryKey();
+		
+				for(int i=0;i<columnData.size();i++) {
+					MetaData mData = columnData.get(i);
+					if(mData.getColumnName().equals(pk)) {
+						indxOfPk = i;
+					}
+				}
+			
+			 
 				 
-			 }
-			 
-			 
+				 for(int i =0;i<testData.size();i++) {
+					 ArrayList<Object>innerArr = new ArrayList<>();
+					 innerArr = (ArrayList<Object>) testData.get(i);
+					 fKeyCol.add(innerArr.get(indxOfPk));
+					 innerArr.remove(indxOfPk);
+					 norCol.add(innerArr);
+					 
+				 }
+				 
+				 for(int i =0;i<testData.size();i++) {
+					 ArrayList<Object>innerArr = new ArrayList<>();
+					 innerArr = (ArrayList<Object>) testData.get(i);
+					 fKeyCol.add(innerArr.get(indxOfPk));
+					 innerArr.remove(indxOfPk);
+					 norCol.add(innerArr);
+					 
+				 }
+			 splitMap.put("pkList", fKeyCol);
+			 splitMap.put("colTstData",norCol);
+			} 
 			System.out.println("edwew");
 			
 			
@@ -423,15 +454,28 @@ public class DataGenService implements TestDataService{
 		
 		try {
 			ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
+			ArrayList<Object> testData = new ArrayList<>();
 			
 			int loops=Integer.parseInt(numOfLoops);
 			
 			if(!(dbMetaObj == null || dbMetaObj.isEmpty())) {
 				DbMetaData arr = dbMetaObj.get(0);
-				String tableName =arr.getTableName();
+				String tableName =arr.getFkParentTblName();
 				LinkedHashMap<String, ArrayList<Object>> result = (LinkedHashMap<String, ArrayList<Object>>) removeFColumn(loops);
-				String[]queryString = getFKeyMeta();
-				gen.insrtData(queryString, tableName);
+				
+				
+				testData = result.get("colTstData");
+				
+				
+				
+				//String[]queryString = getFKeyMeta();
+				
+				String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,testData);
+				
+				//gen.insrtData(queryString, tableName);
+				
+				executeDataInsert(numOfLoops,mainTable);
+				
 			}else {
 				executeDataInsert(numOfLoops,mainTable);
 			}
@@ -449,8 +493,8 @@ public class DataGenService implements TestDataService{
 		
 	}
 
-	public List<Object> genTestDtaMulti(int numOfLoops) throws Exception {
-		ArrayList<Object> metaData = (ArrayList<Object>) gen.getTbleMetaData();
+	public List<Object> genTestDtaMulti(int numOfLoops,ArrayList<MetaData> metaData) throws Exception {
+		//ArrayList<Object> metaData = (ArrayList<Object>) gen.getTbleMetaData();
 		
 		ArrayList<Object> genDataList = new ArrayList<>();
 		ArrayList<Object> genDataList1 = new ArrayList<>();
@@ -463,11 +507,18 @@ public class DataGenService implements TestDataService{
 			for (int i = 0; i < metaData.size(); i++) {
 
 
-				ArrayList<Object> innerArr = (ArrayList<Object>) metaData.get(i);
+				MetaData metaObj = (MetaData) metaData.get(i);
 				
-					switch (innerArr.get(1).toString()) {
+					switch (metaObj.getColumnTypeName()) {
 
 					case "int":
+
+						data.add(dataGenTypes.getInt());
+						genDataList.add(data);
+						
+						break;
+						
+					case "int identity":
 
 						data.add(dataGenTypes.getInt());
 						genDataList.add(data);
@@ -505,7 +556,7 @@ public class DataGenService implements TestDataService{
 
 					case "decimal":
 
-						data.add(dataGenTypes.getDecimal(innerArr));
+						data.add(dataGenTypes.getDecimal(metaObj));
 						genDataList.add(data);
 					
 						break;
@@ -524,5 +575,11 @@ public class DataGenService implements TestDataService{
 	
 		
 	}
-
+	
+	public ArrayList<Object> generatePK(){
+		
+		ArrayList<Object> result = new ArrayList<>();
+		
+		return result;
+	}
 }

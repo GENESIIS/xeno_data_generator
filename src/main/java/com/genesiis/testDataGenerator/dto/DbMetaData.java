@@ -3,6 +3,7 @@
  */
 package com.genesiis.testDataGenerator.dto;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,12 +11,13 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@Scope("prototype")
 public class DbMetaData {
 	
-	private String columnName;
-	private String tableName;
+	private String fkParentTable;
+	private String fkParentTblName;
 	private String primaryKey;
-	private String PrimaryKTble;
+	private String primaryKTble;
 	
 	
 	
@@ -26,22 +28,22 @@ public class DbMetaData {
 		this.primaryKey = primaryKey;
 	}
 	public String getPrimaryKTble() {
-		return PrimaryKTble;
+		return primaryKTble;
 	}
 	public void setPrimaryKTble(String primaryKTble) {
-		PrimaryKTble = primaryKTble;
+		this.primaryKTble = primaryKTble;
 	}
-	public String getColumnName() {
-		return columnName;
+	public String getFkParentTable() {
+		return fkParentTable;
 	}
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
+	public void setFkParentTable(String fkParentTable) {
+		this.fkParentTable = fkParentTable;
 	}
-	public String getTableName() {
-		return tableName;
+	public String getFkParentTblName() {
+		return fkParentTblName;
 	}
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
+	public void setFkParentTblName(String fkParentTblName) {
+		this.fkParentTblName = fkParentTblName;
 	}
 	
 	
