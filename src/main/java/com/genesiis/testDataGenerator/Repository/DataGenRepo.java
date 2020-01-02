@@ -29,6 +29,8 @@ public interface DataGenRepo{
 	public List<MetaData> getTbleMetaData(String tableName);
 	
 	public List<MetaData> gtFkTbleMetaDta(String tbleName);
+	
+	public ArrayList<Object>  insertFkTbleDta(String tableName,String columnName);
 
 	
 }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -193,23 +194,15 @@ public class DataGenRepoImpl implements DataGenRepo{
 	
 	public List<DbMetaData> getKeys(String tableName) throws SQLException {
 		
-		  ArrayList<DbMetaData> dbMetaData = new ArrayList<>();
-	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
-	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
-	      Connection con1 = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
-	      
-	      DataGenService dataGen = new DataGenService(); 
-	      
-	     //String args [] = dataGen.crtQueryStrng(input,data);
-	      
-	     // Statement stmt = con.createStatement();
+		 ArrayList<DbMetaData> dbMetaData = new ArrayList<>();
+	     String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
+	     Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
+	     Connection con1 = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
 	      
 	     DatabaseMetaData dbm = con.getMetaData();
 	     DatabaseMetaData dbm1 = con1.getMetaData();
 	     ResultSet rs = dbm.getImportedKeys(null, "XENO", tableName);
-	    // ResultSet rs1 = dbm.getExportedKeys(null, "XENO", "DEPARTMENT");
-	    
-	     
+	 
 	     while(rs.next()) {
 	    	
 	    	dbMData = new DbMetaData();
@@ -239,9 +232,6 @@ public class DataGenRepoImpl implements DataGenRepo{
 	@Override
 	public List<MetaData> retColumnData(ArrayList<DbMetaData>dbMeta) throws SQLException {
 		
-		System.out.println(dbMeta);
-		System.out.println("WEWE");
-		
 		 ArrayList<MetaData> tableMeta = new ArrayList<>();
 	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
 	      Connection con = DriverManager.getConnection(mysqlUrl, "nj_sdb", "AWSwp2!wa9");
@@ -263,6 +253,49 @@ public class DataGenRepoImpl implements DataGenRepo{
 		
 		
 		return tableMeta;
+	}
+
+	@Override
+	public ArrayList<Object> insertFkTbleDta(String tableName,String columnName) {
+		
+		ArrayList<Object> rows = new ArrayList<>();
+		
+		String query = "Select "+columnName+" from xeno."+tableName+"";
+		
+		
+	
+		return  namedParameterJdbcTemplate.query(query, new ResultSetExtractor<ArrayList<Object>>() {
+
+			@Override
+			public ArrayList<Object> extractData(ResultSet rs) throws SQLException {
+				
+				Connection con = null;
+				try {
+					con = JdbcTemplate.getDataSource().getConnection();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				Statement stmt = con.createStatement();
+				
+				rs = stmt.executeQuery(query);
+				
+				while(rs.next()) {
+
+					rows.add(rs.getObject(columnName)); 
+					
+				}
+				
+				
+				con.close();
+				
+				return rows;
+			}
+		});
+
+		
+		
 	}
 
 	

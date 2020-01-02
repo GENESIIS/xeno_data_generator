@@ -1,5 +1,5 @@
 /**
- *20191216 NJ XENO-94 - init and added methods to generate test data according to datatypes
+ * 
  */
 package com.genesiis.testDataGenerator.Service.impl;
 
@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.assertj.core.util.DateUtil;
 import org.springframework.stereotype.Component;
 
 import com.genesiis.testDataGenerator.dto.MetaData;
@@ -19,10 +18,11 @@ import com.genesiis.testDataGenerator.dto.MetaData;
  * @author nipuna
  *
  */
+
 @Component
-public class DataGenTypes {
+public class FkDataGenTypes {
 	
-	static Random r;
+static Random r;
 	
 	//generate values for columns having the datatype varchar
 	public String genVarchar() {
@@ -42,10 +42,18 @@ public class DataGenTypes {
 		
 	}
 	//generate values for columns having the datatype int
-	public int getInt() {
-		int random = (int)(Math.random()*50+1);
+	public int getInt(ArrayList<Object> pkList) {
+		
+		ArrayList<Integer>intList = new ArrayList<>();
+		
+		for(int i=0;i<pkList.size();i++) {
+			if(pkList.get(i) instanceof Integer) {
+				intList.add((Integer)pkList.get(i));
+			}
+		}
+		Random rand = new Random();
     
-		return random;
+		return intList.get(rand.nextInt(intList.size()));
 		
 	}
 	//generate values for columns having the datatype dateTime
@@ -113,5 +121,5 @@ public class DataGenTypes {
 			return ThreadLocalRandom.current().nextLong(min, min * 10);
 	  		
 		}
-	
+
 }
