@@ -39,15 +39,23 @@ public class DataGenService implements TestDataService{
 	
 	
 	@Override
-	public HashMap<String, String> getColumnData() {
+	public HashMap<String, String> getColumnData(String tble) throws SQLException {
 		
-		  ArrayList<Object> metaData = (ArrayList<Object>) gen.getTbleMetaData();
+		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys(tble);
+		
+		ArrayList<MetaData> metaData = (ArrayList<MetaData>) gen.getTbleMetaData(tble);
 		
 		HashMap<String, String> columnData = new LinkedHashMap<>();
 		
-		for(int i = 0;i<metaData.size();i++) {
+		for (MetaData metData : metaData) {
+			if(!(metData.isAutoIncrement().equals("YES"))) {
+			columnData.put(metData.getColumnName(), metData.getColumnTypeName());
+			}
+		}
+		
+		/*for(int i = 0;i<metaData.size();i++) {
 			
-			ArrayList<Object> innerArr = (ArrayList<Object>) metaData.get(i);
+			ArrayList<MetaData> innerArr = (ArrayList<MetaData>) metaData.get(i);
 			
 			if ((boolean) innerArr.get(3)) {
 				metaData.removeAll(innerArr);
@@ -56,14 +64,14 @@ public class DataGenService implements TestDataService{
 				columnData.put(innerArr.get(0).toString(),innerArr.get(1).toString());
 			
 			}
-		}
+		}*/
 	
 		return columnData;
 	}
 	
 	@Override
-	public List<Object> generateTstData(int numOfLoops) throws Exception {
-		ArrayList<Object> metaData = (ArrayList<Object>) gen.getTbleMetaData();
+	public List<Object> generateTstData(int numOfLoops,String tableName) throws Exception {
+		ArrayList<MetaData> metaData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
 		
 		ArrayList<Object> genDataList = new ArrayList<>();
 		ArrayList<Object> genDataList1 = new ArrayList<>();
@@ -76,14 +84,20 @@ public class DataGenService implements TestDataService{
 			for (int i = 0; i < metaData.size(); i++) {
 
 
-				ArrayList<Object> innerArr = (ArrayList<Object>) metaData.get(i);
-				if ((boolean) innerArr.get(3)) {
-					metaData.removeAll(innerArr);
-				} else {
+				MetaData metaObj = (MetaData) metaData.get(i); 
+				if (!(metaObj.isAutoIncrement().equals("YES"))) {
+					
 
-					switch (innerArr.get(1).toString()) {
+					switch (metaObj.getColumnTypeName()) {
 
 					case "int":
+
+						data.add(dataGenTypes.getInt());
+						genDataList.add(data);
+						
+						break;
+						
+					case "int identity":
 
 						data.add(dataGenTypes.getInt());
 						genDataList.add(data);
@@ -121,10 +135,11 @@ public class DataGenService implements TestDataService{
 
 					case "decimal":
 
-						data.add(dataGenTypes.getDecimal(innerArr));
+						data.add(dataGenTypes.getDecimal(metaObj));
 						genDataList.add(data);
 					
 						break;
+					
 
 					}
 					
@@ -279,18 +294,18 @@ public class DataGenService implements TestDataService{
 	}
 
 	@Override
-	public void executeDataInsert(String numOfLoops,String tableName) {
+	public void executeDataInsert(String numOfLoops,String tableName) throws SQLException {
 		
 		ArrayList<Object>splittedList = new ArrayList<>();
 		Object [] QueryArgs = {};
 		
 		int loops = Integer.parseInt(numOfLoops);
 		
-		HashMap<String,String> columnData = getColumnData();
+		HashMap<String,String> columnData = getColumnData(tableName);
 		
 		ArrayList<Object> genTestedData = null;
 		try {
-			genTestedData = (ArrayList<Object>) generateTstData(loops);
+			genTestedData = (ArrayList<Object>) generateTstData(loops,tableName);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -349,8 +364,8 @@ public class DataGenService implements TestDataService{
 	}
 
 	@Override
-	public ArrayList<DbMetaData> getForiegnKeys() throws SQLException {
-		ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys();
+	public ArrayList<DbMetaData> getForiegnKeys(String tableName) throws SQLException {
+		ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys(tableName);
 		
 		for (DbMetaData dbMetaData : dbMetaObj) {
 			System.out.println("column Name : "+dbMetaData.getFkParentTable());
@@ -361,9 +376,9 @@ public class DataGenService implements TestDataService{
 	}
 
 	@Override
-	public String[] getFKeyMeta() throws SQLException,Exception {
+	public String[] getFKeyMeta(String mainTable) throws SQLException,Exception {
 		
-		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
+		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys(mainTable);
 		DbMetaData dbMeta = dbMetaObj.get(0);
 		String tableName = dbMeta.getFkParentTblName();
 		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
@@ -378,7 +393,7 @@ public class DataGenService implements TestDataService{
 				columnDataArr.add(metaData.getColumnName());
 			}
 		}
-		ArrayList<Object> genTestedData = (ArrayList<Object>) generateTstData(columnDataArr.size());
+		ArrayList<Object> genTestedData = (ArrayList<Object>) generateTstData(columnDataArr.size(),mainTable);
 	
 		String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,genTestedData);
 		
@@ -386,7 +401,7 @@ public class DataGenService implements TestDataService{
 		
 	}
 
-	public Map<String, ArrayList<Object>> removeFColumn(int numOfLoops) {
+	public Map<String, ArrayList<Object>> removeFColumn(int numOfLoops,String table) {
 		
 
 		Map<String, ArrayList<Object>>splitMap = new LinkedHashMap<>();
@@ -397,10 +412,12 @@ public class DataGenService implements TestDataService{
 		try {
 			//ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
 			
-			ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys();
+			ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys(table);
 			String pk = "";
 			
-			String tableName = "ss";
+			DbMetaData dbm =dbMetaObj.get(0);
+			
+			String tableName = dbm.getFkParentTable();
 			ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
 			ArrayList<Object>testData = (ArrayList<Object>) genTestDtaMulti(numOfLoops,columnData);
 			
@@ -426,14 +443,7 @@ public class DataGenService implements TestDataService{
 					 
 				 }
 				 
-				 for(int i =0;i<testData.size();i++) {
-					 ArrayList<Object>innerArr = new ArrayList<>();
-					 innerArr = (ArrayList<Object>) testData.get(i);
-					 fKeyCol.add(innerArr.get(indxOfPk));
-					 innerArr.remove(indxOfPk);
-					 norCol.add(innerArr);
-					 
-				 }
+				
 			 splitMap.put("pkList", fKeyCol);
 			 splitMap.put("colTstData",norCol);
 			} 
@@ -453,15 +463,27 @@ public class DataGenService implements TestDataService{
 	public void mainExecutor(String numOfLoops,String mainTable) throws Exception {
 		
 		try {
-			ArrayList<DbMetaData>dbMetaObj = getForiegnKeys();
+			ArrayList<DbMetaData>dbMetaObj = getForiegnKeys(mainTable);
 			ArrayList<Object> testData = new ArrayList<>();
+			ArrayList colData = new ArrayList<>();
 			
 			int loops=Integer.parseInt(numOfLoops);
+			
 			
 			if(!(dbMetaObj == null || dbMetaObj.isEmpty())) {
 				DbMetaData arr = dbMetaObj.get(0);
 				String tableName =arr.getFkParentTblName();
-				LinkedHashMap<String, ArrayList<Object>> result = (LinkedHashMap<String, ArrayList<Object>>) removeFColumn(loops);
+				String pk = arr.getPrimaryKey();
+				
+				ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.gtFkTbleMetaDta(tableName);
+				
+				for (MetaData metaData : columnData) {
+					if(!metaData.getColumnName().equals(pk)) {
+					colData.add(metaData.getColumnName());
+					}
+				}
+				
+				LinkedHashMap<String, ArrayList<Object>> result = (LinkedHashMap<String, ArrayList<Object>>) removeFColumn(loops,mainTable);
 				
 				
 				testData = result.get("colTstData");
@@ -470,9 +492,9 @@ public class DataGenService implements TestDataService{
 				
 				//String[]queryString = getFKeyMeta();
 				
-				String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,testData);
+				String [] QueryArg = (String[]) crtQueryStrng(colData,testData);
 				
-				//gen.insrtData(queryString, tableName);
+				gen.insrtData(QueryArg, tableName);
 				
 				executeDataInsert(numOfLoops,mainTable);
 				
@@ -581,5 +603,11 @@ public class DataGenService implements TestDataService{
 		ArrayList<Object> result = new ArrayList<>();
 		
 		return result;
+	}
+
+	@Override
+	public Map<String, ArrayList<Object>> removeFColumn(int numOfLoops) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

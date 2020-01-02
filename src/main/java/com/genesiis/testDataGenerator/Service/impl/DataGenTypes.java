@@ -87,8 +87,8 @@ public class DataGenTypes {
 			return dt;
 		}
 	public char getChar() {
-		
-  		char chr = (char)(r.nextInt(26) + 'a');
+		Random rnd = new Random();
+  		char chr = (char)(rnd.nextInt(26) + 'a');
   		
   		System.out.println("char is : "+chr);
   		

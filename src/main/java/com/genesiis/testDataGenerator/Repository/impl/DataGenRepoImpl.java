@@ -84,9 +84,9 @@ public class DataGenRepoImpl implements DataGenRepo{
 	@Override
 	public List<MetaData> getTbleMetaData(String tbleName){
 		
-		String tableName = dbMData.getFkParentTblName();
+		//String tableName = dbMData.getFkParentTblName();
 		
-		String query = "Select * from xeno."+tableName+"";
+		String query = "Select * from xeno."+tbleName+"";
 		
 
 		return  namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<MetaData>>() {
@@ -105,7 +105,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 				
 				DatabaseMetaData dbm = con.getMetaData();
 				ArrayList<MetaData> metaDataList = new ArrayList<>();
-				 rs = dbm.getColumns(null, "XENO", tableName, null);
+				 rs = dbm.getColumns(null, "XENO", tbleName, null);
 				 
 				 
 				 while(rs.next()) {
@@ -123,6 +123,50 @@ public class DataGenRepoImpl implements DataGenRepo{
 		});
 
 	}
+	
+	public List<MetaData> gtFkTbleMetaDta(String tbleName){
+			
+			String tableName = dbMData.getFkParentTblName();
+			
+			String query = "Select * from xeno."+tableName+"";
+			
+	
+			return  namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<MetaData>>() {
+	
+				@Override
+				public List<MetaData> extractData(ResultSet rs) throws SQLException {
+					
+					Connection con = null;
+					try {
+						con = JdbcTemplate.getDataSource().getConnection();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	
+					
+					DatabaseMetaData dbm = con.getMetaData();
+					ArrayList<MetaData> metaDataList = new ArrayList<>();
+					 rs = dbm.getColumns(null, "XENO", tableName, null);
+					 
+					 
+					 while(rs.next()) {
+				    	 columnMeta =new MetaData(); 
+				    	 columnMeta.setColumnName(rs.getString("COLUMN_NAME"));
+				    	 columnMeta.setColumnTypeName(rs.getString("TYPE_NAME"));
+				    	 columnMeta.setColumnSize(rs.getInt("COLUMN_SIZE"));
+				    	 columnMeta.setAutoIncrement(rs.getString("IS_AUTOINCREMENT"));
+				    	 columnMeta.setIsNullable(rs.getInt("NULLABLE"));
+				    	 metaDataList.add(columnMeta);
+				     }
+					
+					return metaDataList;
+				}
+			});
+	
+		}
+
+	
 
 	@Override
 	public void insrtTextData(Object[]args,String tableName) {
@@ -147,7 +191,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 		
 	}
 	
-	public List<DbMetaData> getKeys() throws SQLException {
+	public List<DbMetaData> getKeys(String tableName) throws SQLException {
 		
 		  ArrayList<DbMetaData> dbMetaData = new ArrayList<>();
 	      String mysqlUrl = "jdbc:sqlserver://220.247.201.82:20020";
@@ -162,7 +206,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 	      
 	     DatabaseMetaData dbm = con.getMetaData();
 	     DatabaseMetaData dbm1 = con1.getMetaData();
-	     ResultSet rs = dbm.getImportedKeys(null, "XENO", "TESTDATA");
+	     ResultSet rs = dbm.getImportedKeys(null, "XENO", tableName);
 	    // ResultSet rs1 = dbm.getExportedKeys(null, "XENO", "DEPARTMENT");
 	    
 	     
