@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.assertj.core.util.DateUtil;
 import org.springframework.stereotype.Component;
 
 import com.genesiis.testDataGenerator.dto.MetaData;
