@@ -106,18 +106,37 @@ public class DataGenRepoImpl implements DataGenRepo{
 				
 				DatabaseMetaData dbm = con.getMetaData();
 				ArrayList<MetaData> metaDataList = new ArrayList<>();
-				 rs = dbm.getColumns(null, "XENO", tbleName, null);
+				// rs = dbm.getColumns(null, "XENO", tbleName, null);
 				 
 				 
-				 while(rs.next()) {
+				 /*while(rs.next()) {
 			    	 columnMeta =new MetaData(); 
 			    	 columnMeta.setColumnName(rs.getString("COLUMN_NAME"));
 			    	 columnMeta.setColumnTypeName(rs.getString("TYPE_NAME"));
 			    	 columnMeta.setColumnSize(rs.getInt("COLUMN_SIZE"));
 			    	 columnMeta.setAutoIncrement(rs.getString("IS_AUTOINCREMENT"));
 			    	 columnMeta.setIsNullable(rs.getInt("NULLABLE"));
+			    	 
+			    	 
+			    	 
 			    	 metaDataList.add(columnMeta);
-			     }
+			     }*/
+				 
+					ResultSetMetaData rsmd = rs.getMetaData();
+					 for(int i =1;i<rsmd.getColumnCount()+1;i++) {
+						 
+					         columnMeta =new MetaData(); 
+					    	 columnMeta.setColumnName(rsmd.getColumnName(i));
+					    	 columnMeta.setColumnTypeName(rsmd.getColumnTypeName(i));
+					    	 columnMeta.setColumnSize(rsmd.getColumnDisplaySize(i));
+					    	 columnMeta.setAutoIncrement(Boolean.toString(rsmd.isAutoIncrement(i)));
+					    	 columnMeta.setIsNullable(rsmd.isNullable(i));
+					    	 columnMeta.setPrecision(rsmd.getPrecision(i));
+					    	 columnMeta.setScale(rsmd.getScale(i));
+					      
+					      metaDataList.add(columnMeta);
+		  
+					      }
 				
 				return metaDataList;
 			}

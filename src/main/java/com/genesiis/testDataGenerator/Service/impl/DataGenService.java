@@ -46,7 +46,7 @@ public class DataGenService implements TestDataService{
 		HashMap<String, String> columnData = new LinkedHashMap<>();
 		
 		for (MetaData metData : metaData) {
-			if(!(metData.isAutoIncrement().equals("YES"))) {
+			if(!(metData.isAutoIncrement().equals("true"))) {
 			columnData.put(metData.getColumnName(), metData.getColumnTypeName());
 			}
 		}
@@ -83,7 +83,7 @@ public class DataGenService implements TestDataService{
 
 
 				MetaData metaObj = (MetaData) metaData.get(i); 
-				if (!(metaObj.isAutoIncrement().equals("YES"))) {
+				if (!(metaObj.isAutoIncrement().equals("true"))) {
 					
 
 					switch (metaObj.getColumnTypeName()) {
@@ -289,7 +289,6 @@ public class DataGenService implements TestDataService{
 	public void executeDataInsert(String numOfLoops,String tableName) throws SQLException {
 		
 		ArrayList<DbMetaData> dbm = getForiegnKeys(tableName);
-		DbMetaData dbmObj =dbm.get(0);
 		
 		ArrayList<Object>splittedList = new ArrayList<>();
 		Object [] QueryArgs = {};
@@ -300,28 +299,40 @@ public class DataGenService implements TestDataService{
 		ArrayList<Object> columnDataAr = new ArrayList<>(columnData.keySet());
 		
 		ArrayList<Object> genTestedData = null;
-		try {
+		
+		if(dbm == null ||dbm.isEmpty()) {
 			
-			ArrayList<Object> fkTblePkVals =gen.insertFkTbleDta(dbmObj.getFkParentTblName(),dbmObj.getPrimaryKey());
-			
-			ArrayList<MetaData> colData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
-			
-			if(columnData.containsKey(dbmObj.getFkParentTable())) {
-				
-				genTestedData =(ArrayList<Object>) genTestDtaMulti(loops,colData,fkTblePkVals,dbmObj.getFkParentTable());
-				
-			}else {
-				
+			try {
 				genTestedData = (ArrayList<Object>) generateTstData(loops,tableName);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else {
+			
+			DbMetaData dbmObj =dbm.get(0);
+			
+			
+			try {
 				
+				ArrayList<Object> fkTblePkVals =gen.insertFkTbleDta(dbmObj.getFkParentTblName(),dbmObj.getPrimaryKey());
+				
+				ArrayList<MetaData> colData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
+				
+				if(columnData.containsKey(dbmObj.getFkParentTable())) {
+					
+					genTestedData =(ArrayList<Object>) genTestDtaMulti(loops,colData,fkTblePkVals,dbmObj.getFkParentTable());
+					
+				}
+				
+				
+			} catch (Exception e) {
+
+				e.printStackTrace();
 			}
 			
-			
-		} catch (Exception e) {
-
-			e.printStackTrace();
 		}
-		
+	
 		int threshold = 999;
 		int i = 0;
 		
@@ -329,14 +340,7 @@ public class DataGenService implements TestDataService{
 		tableName=tableName.trim();
 		
 		double numberOfLoops = Math.ceil((double)genTestedData.size()/(double)threshold);
-		
-		int loop = (int)numberOfLoops;
-		int start = 0;
-		int end = threshold;
-		
-		
-		
-		
+
 		/*if(genTestedData.size()>=1000) {
 			for(int j =0;j<loop;j++) {
 			
@@ -405,7 +409,7 @@ public class DataGenService implements TestDataService{
 		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
 		for (MetaData metaData : columnData) {
 			
-			if(!metaData.isAutoIncrement().equals("YES")) {
+			if(!metaData.isAutoIncrement().equals("yes")) {
 				columnDataArr.add(metaData.getColumnName());
 			}
 		}
@@ -503,7 +507,7 @@ public class DataGenService implements TestDataService{
 
 				MetaData metaObj = (MetaData) metaData.get(i);
 				
-				if (!(metaObj.isAutoIncrement().equals("YES"))) {
+				if (!(metaObj.isAutoIncrement().equals("true"))) {
 					switch (metaObj.getColumnTypeName()) {
 
 					case "int":
@@ -664,22 +668,23 @@ public class DataGenService implements TestDataService{
 		int loop = (int)numberOfLoops;
 		int start = 0;
 		int end = threshold;
+		int listSize = genTestedData.size();
 		
-		if(genTestedData.size()>=1000) {
+		if(listSize>=1000) {
 			for(int j =0;j<loop;j++) {
 			
-			if(j == (loop - 1)) {
-				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, genTestedData.size()));
+			if((end-start) !=threshold || end>listSize) {
+				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, listSize));
 				splittedList.add(innrSplitdList);
 			}else {
-				
+			
 				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, end));
 				splittedList.add(innrSplitdList);
 			}
 				
 			
 			start = end;
-			end =end+end; 
+			end =end+threshold; 
 		 
 			}
 			QueryArgs= crtBlkQryStrng(columnDataArr,splittedList);
