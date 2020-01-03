@@ -293,22 +293,23 @@ public class DataGenService implements TestDataService{
 		int loop = (int)numberOfLoops;
 		int start = 0;
 		int end = threshold;
+		int listSize = genTestedData.size();
 		
-		if(genTestedData.size()>=1000) {
+		if(listSize>=1000) {
 			for(int j =0;j<loop;j++) {
 			
-			if(j == (loop - 1)) {
-				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, genTestedData.size()));
+			if((end-start) !=threshold || end>listSize) {
+				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, listSize));
 				splittedList.add(innrSplitdList);
 			}else {
-				
+			
 				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, end));
 				splittedList.add(innrSplitdList);
 			}
 				
 			
 			start = end;
-			end =end+end; 
+			end =end+threshold; 
 		 
 			}
 			QueryArgs= crtBlkQryStrng(columnDataArr,splittedList);
