@@ -1,6 +1,7 @@
 /*
  * 20191209 NJ XENO-94 init and added code to extract table meta data
  * 20191216 NJ XENO-94 - included dependency injection and removed default object creation and we-write a method to extract meta suing jdbc template
+ * 20200106 NJ XENO-94 - changed a variable name of the gtFkTbleMetaDta(..)
  * */
 
 /**
@@ -146,9 +147,9 @@ public class DataGenRepoImpl implements DataGenRepo{
 	
 	public List<MetaData> gtFkTbleMetaDta(String tbleName){
 			
-			String tableName = dbMData.getFkParentTblName();
+			//String tableName = dbMData.getFkParentTblName();
 			
-			String query = "Select * from xeno."+tableName+"";
+			String query = "Select * from xeno."+tbleName+"";
 			
 	
 			return  namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<MetaData>>() {
@@ -167,7 +168,7 @@ public class DataGenRepoImpl implements DataGenRepo{
 					
 					DatabaseMetaData dbm = con.getMetaData();
 					ArrayList<MetaData> metaDataList = new ArrayList<>();
-					 rs = dbm.getColumns(null, "XENO", tableName, null);
+					 rs = dbm.getColumns(null, "XENO", tbleName, null);
 					 
 					 
 					 while(rs.next()) {

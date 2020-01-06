@@ -1,5 +1,6 @@
 /*
  *  20191216 NJ XENO-94 - included dependency injection and removed default object creation
+ *  20200106 NJ XEN0-94 - changed the exception type of executeDataInsert to Exception 
  *  */
 package com.genesiis.testDataGenerator.Service;
 
@@ -23,7 +24,7 @@ public interface TestDataService {
 	
 	public Object[] crtBlkQryStrng(ArrayList params,ArrayList values); 
 	
-	public void executeDataInsert(String numOfLoops,String tableName) throws SQLException;
+	public void executeDataInsert(String numOfLoops,String tableName)throws Exception;
 	
 	public HashMap<String, String> getColumnData(String mainTable)throws SQLException;
 	
@@ -34,7 +35,5 @@ public interface TestDataService {
 	public void removeFColumn();
 	
 	public void mainExecutor(String numOfLoops,String mainTable) throws Exception;
-	
-	public  Map<String, ArrayList<Object>> removeFColumn(int numOfLoops) throws Exception;
 
 }

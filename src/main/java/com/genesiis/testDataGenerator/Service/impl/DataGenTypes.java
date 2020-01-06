@@ -24,11 +24,11 @@ public class DataGenTypes {
 	static Random r;
 	
 	//generate values for columns having the datatype varchar
-	public String genVarchar() {
+	public String genVarchar(int length) {
 		
 		int leftLimit = 97; // letter 'a'
   	    int rightLimit = 122; // letter 'z'
-  	    int targetStringLength = 10;
+  	    int targetStringLength = length;
   	    Random random1 = new Random();
   	    StringBuilder buffer = new StringBuilder(targetStringLength);
   	    for (int j = 0; j < targetStringLength; j++) {
