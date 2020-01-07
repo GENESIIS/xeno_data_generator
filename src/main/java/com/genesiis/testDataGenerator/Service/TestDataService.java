@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -31,8 +30,6 @@ public interface TestDataService {
 	public ArrayList<DbMetaData> getForiegnKeys(String tableName) throws SQLException;
 	
 	public String[] getFKeyMeta(String mainTable) throws SQLException,Exception;
-	
-	public void removeFColumn();
 	
 	public void mainExecutor(String numOfLoops,String mainTable) throws Exception;
 

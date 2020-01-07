@@ -51,19 +51,6 @@ public class DataGenService implements TestDataService{
 			columnData.put(metData.getColumnName(), metData.getColumnTypeName());
 			}
 		}
-		
-		/*for(int i = 0;i<metaData.size();i++) {
-			
-			ArrayList<MetaData> innerArr = (ArrayList<MetaData>) metaData.get(i);
-			
-			if ((boolean) innerArr.get(3)) {
-				metaData.removeAll(innerArr);
-			} else {
-		
-				columnData.put(innerArr.get(0).toString(),innerArr.get(1).toString());
-			
-			}
-		}*/
 	
 		return columnData;
 	}
@@ -74,33 +61,22 @@ public class DataGenService implements TestDataService{
 		
 		ArrayList<Object> genDataList = new ArrayList<>();
 		ArrayList<Object> genDataList1 = new ArrayList<>();
-		
-		
 		int j = 0;
 	
 		while (j < numOfLoops) {
 			ArrayList<Object> data = new ArrayList<>();
 			for (int i = 0; i < metaData.size(); i++) {
 
-
-				MetaData metaObj = (MetaData) metaData.get(i); 
+				MetaData metaObj =  metaData.get(i); 
 				if (!(metaObj.isAutoIncrement().equals("true"))) {
 					
-
 					switch (metaObj.getColumnTypeName()) {
 
-					case "int":
-
-						data.add(dataGenTypes.getInt());
-						genDataList.add(data);
-						
-						break;
-						
+					case "int":	
 					case "int identity":
 
 						data.add(dataGenTypes.getInt());
 						genDataList.add(data);
-						
 						break;
 
 					case "varchar":
@@ -108,37 +84,33 @@ public class DataGenService implements TestDataService{
 						String generatedString = dataGenTypes.genVarchar(metaObj.getColumnSize());
 						data.add(generatedString);
 						genDataList.add(data);
-					
 						break;
 
 					case "datetime":
 
 						data.add(dataGenTypes.getDateTime());
-						genDataList.add(data);
-					
+						genDataList.add(data);				
 						break;
 						
 					case "date":
 
 						data.add(dataGenTypes.getDate());
-						genDataList.add(data);
-					
+						genDataList.add(data);					
 						break;
 
 					case "char":
 
 						data.add(dataGenTypes.getChar());
-						genDataList.add(data);
-					
+						genDataList.add(data);					
 						break;
 
 					case "decimal":
 
 						data.add(dataGenTypes.getDecimal(metaObj));
-						genDataList.add(data);
-					
+						genDataList.add(data);					
 						break;
-					
+						
+					default :
 
 					}
 					
@@ -150,9 +122,7 @@ public class DataGenService implements TestDataService{
 			
 		}
 		
-		return genDataList1;
-	
-		
+		return genDataList1;	
 	}
 	
 	@Override
@@ -178,35 +148,27 @@ public class DataGenService implements TestDataService{
 	      
 	      ArrayList<Object> arr =(ArrayList<Object>) values.get(k); 
 	      int arrSize=arr.size();
-	      for(int j =0;j<arrSize;j++) {
-	    
-	    		if(arr.get(1).toString() == "int" ||arr.get(1).toString() == "decimal") {
-	    			
-	    			
-	    			str1.append(arr.get(j));
-	    			
-	    		}else {
-	    			str1.append("\'");
-	    			str1.append(arr.get(j));
-	    			str1.append("\'");
-	    			
-	    		}
-	    		if(j != arr.size()-1) {
-	    		str1.append(",");
-	    		}
-	    	/*str1.append("?");
-	    	if(j != params.size()-1) {
-	    		str1.append(",");
-	    		}*/
-	    		
-	    		
-	    	
-	      }
-	      if(k == values.size()-1) {
-		      str1.append(")");
-		      }else {
-		    	  str1.append("),");  
+		      for(int j =0;j<arrSize;j++) {
+		    
+		    		if(arr.get(1).toString().equals("int") ||arr.get(1).toString().equals("decimal")) {
+		
+		    			str1.append(arr.get(j));
+		    			
+		    		}else {
+		    			str1.append("\'");
+		    			str1.append(arr.get(j));
+		    			str1.append("\'");
+		    			
+		    		}
+		    		if(j != arr.size()-1) {
+		    		str1.append(",");
+		    		}
 		      }
+		      if(k == values.size()-1) {
+			      str1.append(")");
+			      }else {
+			    	  str1.append("),");  
+			      }
 	     } 
 	      
 	      
@@ -214,9 +176,9 @@ public class DataGenService implements TestDataService{
 	     String queryParam = str.toString();
 	     String vals = str1.toString();
 	     
-	     String [] QueryArgs = {queryParam,vals};
+	     String [] queryArgs = {queryParam,vals};
 	     
-		return QueryArgs;
+		return queryArgs;
 	}
 	
 	@Override
@@ -250,8 +212,7 @@ public class DataGenService implements TestDataService{
 	      int arrSize=arr.size();
 	      for(int j =0;j<arrSize;j++) {
 	    
-	    		if(arr.get(1).toString() == "int" ||arr.get(1).toString() == "decimal") {
-	    			
+	    		if(arr.get(1).toString().equals("int") ||arr.get(1).toString().equals("decimal")) {
 	    			
 	    			str1.append(arr.get(j));
 	    			
@@ -278,12 +239,10 @@ public class DataGenService implements TestDataService{
 	      
 	      
 	     String queryParam = str.toString();
-	     String vals = "";
+	 
+	     Object [] queryArgs = {queryParam,valueList};
 	     
-	     
-	     Object [] QueryArgs = {queryParam,valueList};
-	     
-		return QueryArgs;
+		return queryArgs;
 	}
 
 	@Override
@@ -294,10 +253,7 @@ public class DataGenService implements TestDataService{
 		ArrayList<String>parentTables = new ArrayList<>();
 		
 		int loops = Integer.parseInt(numOfLoops);
-		
 		HashMap<String,String> columnData = getColumnData(tableName);
-		ArrayList<Object> columnDataAr = new ArrayList<>(columnData.keySet());
-		
 		ArrayList<Object> genTestedData = null;
 		
 		ArrayList<MetaData> colData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
@@ -307,7 +263,7 @@ public class DataGenService implements TestDataService{
 			try {
 				genTestedData = (ArrayList<Object>) generateTstData(loops,tableName);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+	
 				e.printStackTrace();
 			}
 		}else {
@@ -322,58 +278,13 @@ public class DataGenService implements TestDataService{
 				
 			}
 
-				
-				//if(columnData.containsKey(dbmObj.getFkParentTable())) {
-					
 					genTestedData =(ArrayList<Object>) genTestDtaMulti(loops,colData,fkTblePkVals,parentTables);
-					
-			//	}
-				
-				
-			
-			
+
 		}
 	
 		
 		ArrayList<String> columnDataArr = new ArrayList<>(columnData.keySet());
 		tableName=tableName.trim();
-		
-		//double numberOfLoops = Math.ceil((double)genTestedData.size()/(double)threshold);
-
-		/*if(genTestedData.size()>=1000) {
-			for(int j =0;j<loop;j++) {
-			
-			if(j == (loop - 1)) {
-				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, genTestedData.size()));
-				splittedList.add(innrSplitdList);
-			}else {
-				
-				ArrayList<Object> innrSplitdList = new ArrayList(genTestedData.subList(start, end));
-				splittedList.add(innrSplitdList);
-			}
-				
-			
-			start = end;
-			end =end+end; 
-		 
-			}
-			QueryArgs= crtBlkQryStrng(columnDataArr,splittedList);
-			
-			ArrayList<Object> vals = (ArrayList<Object>) QueryArgs[1];
-			
-			for(int j =0;j<vals.size();j++) {
-				Object [] singleBulkArgs = {QueryArgs[0],vals.get(j)};
-				gen.insrtTextData(singleBulkArgs,tableName);
-			}
-			
-		}else {
-			
-			
-			String [] QueryArg = (String[]) crtQueryStrng(columnDataAr,genTestedData);
-
-			gen.insrtData(QueryArg,tableName);
-		}*/
-	
 		insertBulk(genTestedData,tableName,columnDataArr);
 		
 		System.out.println("Data Generation was successfull");
@@ -383,14 +294,7 @@ public class DataGenService implements TestDataService{
 
 	@Override
 	public ArrayList<DbMetaData> getForiegnKeys(String tableName) throws SQLException {
-		ArrayList<DbMetaData>dbMetaObj=(ArrayList<DbMetaData>) gen.getKeys(tableName);
-		
-		for (DbMetaData dbMetaData : dbMetaObj) {
-			System.out.println("column Name : "+dbMetaData.getFkParentTable());
-			System.out.println("table Name : "+dbMetaData.getFkParentTblName());
-		}
-		
-		return dbMetaObj;
+		return (ArrayList<DbMetaData>) gen.getKeys(tableName);
 	}
 
 	@Override
@@ -399,11 +303,7 @@ public class DataGenService implements TestDataService{
 		ArrayList<DbMetaData>dbMetaObj = getForiegnKeys(mainTable);
 		DbMetaData dbMeta = dbMetaObj.get(0);
 		String tableName = dbMeta.getFkParentTblName();
-		
-		
-		DbMetaData arr = dbMetaObj.get(0);
-		String tbleName =arr.getFkParentTblName();
-		
+	
 		ArrayList<String> columnDataArr = new ArrayList<>();
 		ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableName);
 		for (MetaData metaData : columnData) {
@@ -413,10 +313,8 @@ public class DataGenService implements TestDataService{
 			}
 		}
 		ArrayList<Object> genTestedData = (ArrayList<Object>) generateTstData(columnDataArr.size(),mainTable);
-	
-		String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,genTestedData);
-		
-		return QueryArg;
+
+		return crtQueryStrng(columnDataArr,genTestedData);
 		
 	}
 
@@ -455,7 +353,7 @@ public class DataGenService implements TestDataService{
 			 
 				 
 				 for(int i =0;i<testData.size();i++) {
-					 ArrayList<Object>innerArr = new ArrayList<>();
+					 ArrayList<Object>innerArr;
 					 innerArr = (ArrayList<Object>) testData.get(i);
 					 fKeyCol.add(innerArr.get(indxOfPk));
 					 norCol.add(innerArr);
@@ -466,8 +364,6 @@ public class DataGenService implements TestDataService{
 			 splitMap.put("pkList", fKeyCol);
 			 splitMap.put("colTstData",testData);
 			} 
-			System.out.println("edwew");
-			
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -476,17 +372,9 @@ public class DataGenService implements TestDataService{
 		}
 		return splitMap;
 	}
-	
-	
 
-	@Override
-	public void removeFColumn() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	public List<Object> genTestDtaMulti(int numOfLoops,ArrayList<MetaData> metaData,ArrayList<Object> pkList,ArrayList<String> pk ) throws Exception {
-		//ArrayList<Object> metaData = (ArrayList<Object>) gen.getTbleMetaData();
+	public List<Object> genTestDtaMulti(int numOfLoops,List<MetaData> metaData,List<Object> pkList,List<String> pk ) throws Exception {
 		
 		ArrayList<Object> genDataList = new ArrayList<>();
 		ArrayList<Object> genDataList1 = new ArrayList<>();
@@ -499,7 +387,7 @@ public class DataGenService implements TestDataService{
 			for (int i = 0; i < metaData.size(); i++) {
 
 
-				MetaData metaObj = (MetaData) metaData.get(i);
+				MetaData metaObj =  metaData.get(i);
 				
 				if (!(metaObj.isAutoIncrement().equals("true"))) {
 					switch (metaObj.getColumnTypeName()) {
@@ -522,7 +410,7 @@ public class DataGenService implements TestDataService{
 					case "int identity":
 
 						if(metaObj.getColumnName().equals(pk)) {
-							data.add(fkDataGenTypes.getInt(pkList));
+							data.add(fkDataGenTypes.getInt((ArrayList<Object>) pkList));
 							genDataList.add(data);
 						}else {
 						
@@ -567,6 +455,7 @@ public class DataGenService implements TestDataService{
 						genDataList.add(data);
 					
 						break;
+					default:
 
 					}
 				}	
@@ -583,18 +472,11 @@ public class DataGenService implements TestDataService{
 		
 	}
 	
-	public ArrayList<Object> generatePK(){
-		
-		ArrayList<Object> result = new ArrayList<>();
-		
-		return result;
-	}
-	
 	public void mainExecutor(String numOfLoops,String mainTable) throws Exception {
 			
 			try {
 				ArrayList<DbMetaData>dbMetaObj = getForiegnKeys(mainTable);
-				ArrayList<Object> testData = new ArrayList<>();
+				ArrayList<Object> testData;
 				
 				
 				int loops=Integer.parseInt(numOfLoops);
@@ -619,8 +501,6 @@ public class DataGenService implements TestDataService{
 						
 						testData = result.get("colTstData");
 				
-						String [] QueryArg = (String[]) crtQueryStrng(colData,testData);
-					
 						insertBulk(testData, tableName,colData);
 						
 					
@@ -639,7 +519,7 @@ public class DataGenService implements TestDataService{
 		ArrayList<Object>splittedList = new ArrayList<>();
 		int threshold = 999;
 		int i = 0;
-		Object [] QueryArgs = {};
+		Object [] queryArgs ;
 		
 		tableName=tableName.trim();
 		
@@ -667,21 +547,21 @@ public class DataGenService implements TestDataService{
 			end =end+threshold; 
 		 
 			}
-			QueryArgs= crtBlkQryStrng(columnDataArr,splittedList);
+			queryArgs= crtBlkQryStrng(columnDataArr,splittedList);
 			
-			ArrayList<Object> vals = (ArrayList<Object>) QueryArgs[1];
+			ArrayList<Object> vals = (ArrayList<Object>) queryArgs[1];
 			
 			for(int j =0;j<vals.size();j++) {
-				Object [] singleBulkArgs = {QueryArgs[0],vals.get(j)};
+				Object [] singleBulkArgs = {queryArgs[0],vals.get(j)};
 				gen.insrtTextData(singleBulkArgs,tableName);
 			}
 			
 		}else {
 			
 			
-			String [] QueryArg = (String[]) crtQueryStrng(columnDataArr,genTestedData);
+			String [] queryArg = crtQueryStrng(columnDataArr,genTestedData);
 
-			gen.insrtData(QueryArg,tableName);
+			gen.insrtData(queryArg,tableName);
 		}
 	
 		

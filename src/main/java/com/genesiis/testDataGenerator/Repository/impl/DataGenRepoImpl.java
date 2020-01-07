@@ -21,18 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.genesiis.testDataGenerator.Repository.DataGenRepo;
-import com.genesiis.testDataGenerator.Service.impl.DataGenService;
 import com.genesiis.testDataGenerator.dto.DbMetaData;
 import com.genesiis.testDataGenerator.dto.MetaData;
-import com.sun.org.apache.bcel.internal.generic.CPInstruction;
 
 @Repository
 public class DataGenRepoImpl implements DataGenRepo{
