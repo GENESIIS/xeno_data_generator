@@ -3,6 +3,8 @@
  * 20191212 NJ XENO-94 - added new case to switch as decimal and removed unwanted code
  * 20191216 NJ XENO-94 - included dependency injection and removed default object creation
  * 20200106 NJ XENO-94 - changed methods to generate and insert data to sub tables of a parent table binded by a  foreign key
+ * 20200107 NJ XENO-94 - removed unused codes and fixed sonalrlint issues
+ * 
  * */
 package com.genesiis.testDataGenerator.Service.impl;
 
@@ -19,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +41,8 @@ public class DataGenService implements TestDataService{
 	@Autowired
 	FkDataGenTypes fkDataGenTypes;
 	
-	
-	
+	private static final Logger logger = LogManager.getLogger(DataGenService.class);
+
 	@Override
 	public HashMap<String, String> getColumnData(String tble) throws SQLException {
 
@@ -287,8 +291,8 @@ public class DataGenService implements TestDataService{
 		tableName=tableName.trim();
 		insertBulk(genTestedData,tableName,columnDataArr);
 		
-		System.out.println("Data Generation was successfull");
-		System.out.println(genTestedData.size()+" rows were generated!!!!!");
+		logger.info("Data Generation was successfull");
+		logger.info(genTestedData.size()+" rows were generated!!!!!");
 		
 	}
 

@@ -1,6 +1,7 @@
 /**
  * @author nipuna
- *20191216 NJ XENO-97 - init 
+ *20191216 NJ XENO-94 - init 
+ *20200107 NJ XENO-94 - removed unused abstract methods
  */
 package com.genesiis.testDataGenerator.Repository;
 
@@ -16,15 +17,13 @@ import com.genesiis.testDataGenerator.dto.MetaData;
 @Repository
 public interface DataGenRepo{
 	
-	public List<Object> getTbleMetaData();
-	
 	public void insrtData(String [] queryParams,String tableName);
 	
 	public void insrtTextData(Object [] queryParams,String tableName);
 	
 	public List<DbMetaData> getKeys(String tableName) throws SQLException;
 	
-	public List<MetaData> retColumnData(ArrayList<DbMetaData> dbMeta) throws SQLException;
+	public List<MetaData> retColumnData(List<DbMetaData> dbMeta) throws SQLException;
 	
 	public List<MetaData> getTbleMetaData(String tableName);
 	
