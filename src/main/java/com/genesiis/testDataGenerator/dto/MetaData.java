@@ -1,6 +1,12 @@
+/**
+ * @author nipuna
+ *20191216 NJ XENO-94 - init MetaData class
+ *
+ */
 package com.genesiis.testDataGenerator.dto;
 
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class MetaData {

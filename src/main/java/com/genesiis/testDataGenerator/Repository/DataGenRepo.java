@@ -1,11 +1,9 @@
 /**
  * @author nipuna
- *20191216 NJ XENO-97 - init 
+ *20191216 NJ XENO-94 - init 
  */
 package com.genesiis.testDataGenerator.Repository;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;

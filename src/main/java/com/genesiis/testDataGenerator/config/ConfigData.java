@@ -1,6 +1,6 @@
 /**
  * @author nipuna
- * 20191216 NJ XENO-97 - init config class
+ * 20191216 NJ XENO-94 - init config class
  */
 package com.genesiis.testDataGenerator.config;
 
