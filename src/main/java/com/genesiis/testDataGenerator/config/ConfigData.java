@@ -17,9 +17,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 public class ConfigData {
-    @Autowired
-    private Environment env;
-
+  
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
@@ -31,7 +29,7 @@ public class ConfigData {
     }
 
     @Bean
-    public DataSource testDataSource() {
+    public DataSource testDataSource(@Autowired Environment env) {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName(env.getProperty("spring.datasource.driverClassName"));
         dataSource.setJdbcUrl(env.getProperty("spring.datasource.url"));

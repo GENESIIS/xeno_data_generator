@@ -7,6 +7,8 @@ package com.genesiis.testDataGenerator;
 
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +19,8 @@ import com.genesiis.testDataGenerator.Service.impl.DataGenService;
 
 @SpringBootApplication
 public class TestDataGeneratorApplication implements CommandLineRunner{
+	
+	private static final  Logger logger = LogManager.getLogger(TestDataGeneratorApplication.class);
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(TestDataGeneratorApplication.class, args);
@@ -35,19 +39,15 @@ public class TestDataGeneratorApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		
 			Scanner in = new Scanner(System.in);
-			System.out.println("**************************************************************************************");
-			System.out.println("******************************TEST-DATA-GENERATOR*************************************");
-			System.out.println("**************************************************************************************");
-			System.out.print("Enter the number of test data to be generated : ");
+			logger.info("**************************************************************************************");
+			logger.info("******************************TEST-DATA-GENERATOR*************************************");
+			logger.info("**************************************************************************************");
+			logger.info("Enter the number of test data to be generated : ");
 			String numOfLoops = in.nextLine();
-			System.out.println("");
-			System.out.print("ENTER THE TABLE NAME : ");
+			logger.info("Enter the table name : ");
 			String tableName = in.nextLine();
 			in.close();
-			
-			System.out.println("number of loops are "+numOfLoops);
-			
-			//getTestDataService().removeFColumn();
+		
 			getTestDataService().mainExecutor(numOfLoops,tableName);
 		
 	}

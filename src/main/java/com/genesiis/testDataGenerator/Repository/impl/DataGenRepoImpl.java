@@ -110,12 +110,9 @@ public class DataGenRepoImpl implements DataGenRepo {
 						metaDataList.add(columnMeta);
 					}
 
-				} catch (SQLException e) {
-
-					logger.error("gtFkTbleMetaDta() : SQL Exception : ", e);
 				} catch (Exception e) {
 
-					logger.error("gtFkTbleMetaDta() : SQL Exception : ", e);
+					logger.error("gtFkTbleMetaDta() : Exception : ", e);
 				}
 
 				return metaDataList;
