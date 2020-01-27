@@ -84,12 +84,16 @@ public class DataGenTypes {
 	  		
 			return dt;
 		}
+	
+	//generate the values for columns having the data type char
 	public char getChar() {
 		Random rnd = new Random();
   		char chr = (char)(rnd.nextInt(26) + 'a');
   		
   		return chr;
 	}
+	
+	//generate the values for columns having the data type Decimal
 	public long getDecimal(ArrayList arr) {
 		
   		int precision = (int)arr.get(5);
@@ -101,10 +105,16 @@ public class DataGenTypes {
   		
 	}
 	
+	
+	/**
+	 * Generate the values for columns having the data type Decimal
+	 * @param meta
+	 * @return
+	 */
 	public long getDecimal(MetaData meta) {
 			
-	  		int precision = (int)meta.getPrecision();
-	  		int scale = (int)meta.getScale();
+	  		int precision = (int)meta.getPrecision();//get precision of the decimal type column points
+	  		int scale = (int)meta.getScale();// get the number of digits after the decimal point
 	  		int num = precision-scale;
 	  		
 	  		long min = (long) Math.pow(10, num - 1);

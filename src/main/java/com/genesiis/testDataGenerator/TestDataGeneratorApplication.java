@@ -2,6 +2,7 @@
  * 20191209 NJ XENO-94 - INIT
  * 20191216 NJ XENO-94 - included dependency injection and removed default object creation
  * 20191219 NJ XENO-94 - added Scanner to get the number of records to be inserted and the table name
+ * 20200127 RP XENO-94 - commenting
  * */
 package com.genesiis.testDataGenerator;
 
@@ -22,12 +23,11 @@ public class TestDataGeneratorApplication implements CommandLineRunner{
 	
 	private static final  Logger logger = LogManager.getLogger(TestDataGeneratorApplication.class);
 
+	//main method of the application 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(TestDataGeneratorApplication.class, args);
-		
-		
-	
 	}
+	
 	
 	@Bean
 	public TestDataService getTestDataService() {

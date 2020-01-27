@@ -290,7 +290,10 @@ public class DataGenService implements TestDataService {
 		}
 
 	}
-
+	
+	/**
+	 * Get the foreign keys of the table
+	 */
 	@Override
 	public ArrayList<DbMetaData> getForiegnKeys(String tableName) throws SQLException {
 		return (ArrayList<DbMetaData>) gen.getKeys(tableName);
@@ -325,7 +328,14 @@ public class DataGenService implements TestDataService {
 		return crtQueryStrng(columnDataArr, genTestedData);
 
 	}
-
+	
+	/**
+	 * TODO
+	 * @param numOfLoops
+	 * @param table
+	 * @param dbm
+	 * @return
+	 */
 	public Map<String, ArrayList<Object>> removeFColumn(int numOfLoops, String table, DbMetaData dbm) {
 
 		Map<String, ArrayList<Object>> splitMap = new LinkedHashMap<>();
@@ -334,16 +344,21 @@ public class DataGenService implements TestDataService {
 		int indxOfPk = 0;
 
 		try {
-
+			
+			//getting the FKs and FK reference table details related to the FK reference table that user entered table
 			ArrayList<DbMetaData> dbMetaObj = (ArrayList<DbMetaData>) gen.getKeys(table);
 			String pk = "";
 
 			ArrayList<String> tableNames = new ArrayList<>();
-			tableNames.add(dbm.getFkParentTable());
+			tableNames.add(dbm.getFkParentTable());//add fetch FK table name to the tableNames list
 
+			//get the inserted primary key values of the FK table
 			ArrayList<Object> fkTblePkVals = gen.insertFkTbleDta(tableNames.get(0), dbm.getPrimaryKey());
 
+			//Get the meta table details related to the FK reference table that user entered table (Column names, column types, null able etc..)
 			ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.getTbleMetaData(tableNames.get(0));
+			
+			//Generate the test data according to data type in columns
 			ArrayList<Object> testData = (ArrayList<Object>) genTestDtaMulti(numOfLoops, columnData, fkTblePkVals,
 					tableNames);
 
@@ -377,6 +392,14 @@ public class DataGenService implements TestDataService {
 		return splitMap;
 	}
 
+	/**
+	 * Generate the the test data according to table columns type
+	 * @param numOfLoops - User entered number of record count
+	 * @param metaData - Table's meta details (column name, column type, column width etc..)
+	 * @param pkList - Inserted primary keys 
+	 * @param pk- Table name
+	 * @return
+	 */
 	public List<Object> genTestDtaMulti(int numOfLoops, List<MetaData> metaData, List<Object> pkList, List<String> pk){
 
 		ArrayList<Object> genDataList = new ArrayList<>();
@@ -389,7 +412,8 @@ public class DataGenService implements TestDataService {
 			for (int i = 0; i < metaData.size(); i++) {
 
 				MetaData metaObj = metaData.get(i);
-
+				
+				//check whether column is auto increment or not
 				if (!(metaObj.isAutoIncrement().equals("true"))) {
 					switch (metaObj.getColumnTypeName()) {
 
@@ -399,19 +423,6 @@ public class DataGenService implements TestDataService {
 							int location = pk.indexOf(metaObj.getColumnName());
 
 							data.add(fkDataGenTypes.getInt((ArrayList<Object>) pkList.get(location)));
-							genDataList.add(data);
-						} else {
-
-							data.add(dataGenTypes.getInt());
-							genDataList.add(data);
-						}
-
-						break;
-
-					case "int identity":
-
-						if (metaObj.getColumnName().equals(pk)) {
-							data.add(fkDataGenTypes.getInt((ArrayList<Object>) pkList));
 							genDataList.add(data);
 						} else {
 
@@ -471,33 +482,45 @@ public class DataGenService implements TestDataService {
 
 		}
 
-		return genDataList1;
+		return genDataList1;//return the generated data list
 
 	}
 
+	
+	/**
+	 * main executor of the system, system will start execution from here
+	 * @param numOfLoops - user entered no of record count
+	 * @param mainTable- user entered table name
+	 */
 	public void mainExecutor(String numOfLoops, String mainTable) {
 
 		try {
+			//getting the FK and reference table rated to the user entered table
 			ArrayList<DbMetaData> dbMetaObj = getForiegnKeys(mainTable);
 			ArrayList<Object> testData;
-
+			
+			//get the user entered record count
 			int loops = Integer.parseInt(numOfLoops);
-
+			
+			//Loop the FK meta data list
 			for (int i = 0; i < dbMetaObj.size(); i++) {
 				ArrayList<String> colData = new ArrayList<>();
 
 				DbMetaData arr = dbMetaObj.get(i);
-				String tableName = arr.getFkParentTblName();
-				String pk = arr.getPrimaryKey();
-
+				String tableName = arr.getFkParentTblName();//get the FK reference table name
+				String pk = arr.getPrimaryKey();//get the FK reference table's primary key column name
+				
+				//get the FK reference table meta data values column name , types, auto increment, null able etc...
 				ArrayList<MetaData> columnData = (ArrayList<MetaData>) gen.gtFkTbleMetaDta(tableName);
 
 				for (MetaData metaData : columnData) {
+					//Add columns data values except primary key column details
 					if (!metaData.getColumnName().equals(pk)) {
 						colData.add(metaData.getColumnName());
 					}
 				}
-
+				
+				
 				LinkedHashMap<String, ArrayList<Object>> result = (LinkedHashMap<String, ArrayList<Object>>) removeFColumn(
 						loops, tableName, arr);
 

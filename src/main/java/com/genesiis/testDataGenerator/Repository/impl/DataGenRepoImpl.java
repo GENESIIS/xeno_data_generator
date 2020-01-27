@@ -84,14 +84,19 @@ public class DataGenRepoImpl implements DataGenRepo {
 
 	}
 
+	/**
+	 * Get the table meta details (Column names, column types, null able etc ...)
+	 * @param tbleName - Table name that wants to get the table meta details
+	 * @return List<MetaData> - list of MetaData
+	 */
 	public List<MetaData> gtFkTbleMetaDta(String tbleName) {
 
-		String query = "Select * from xeno." + tbleName + "";
+		String query = "Select * from xeno." + tbleName + "";//select all values from the table
 
 		return namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<MetaData>>() {
 
 			@Override
-			public List<MetaData> extractData(ResultSet rs) throws SQLException {
+			public List<MetaData> extractData(ResultSet rs) throws SQLException { // get the values as a List of MetaData objects
 
 				ArrayList<MetaData> metaDataList = new ArrayList<>();
 				try (Connection conn = jdbcTemplate.getDataSource().getConnection()) {
@@ -102,11 +107,11 @@ public class DataGenRepoImpl implements DataGenRepo {
 
 					while (rss.next()) {
 						columnMeta = new MetaData();
-						columnMeta.setColumnName(rss.getString("COLUMN_NAME"));
-						columnMeta.setColumnTypeName(rss.getString("TYPE_NAME"));
-						columnMeta.setColumnSize(rss.getInt("COLUMN_SIZE"));
-						columnMeta.setAutoIncrement(rss.getString("IS_AUTOINCREMENT"));
-						columnMeta.setIsNullable(rss.getInt("NULLABLE"));
+						columnMeta.setColumnName(rss.getString("COLUMN_NAME"));//get the column name
+						columnMeta.setColumnTypeName(rss.getString("TYPE_NAME"));// get the column type
+						columnMeta.setColumnSize(rss.getInt("COLUMN_SIZE"));//get the column size
+						columnMeta.setAutoIncrement(rss.getString("IS_AUTOINCREMENT"));//check whether column is auto increment or not
+						columnMeta.setIsNullable(rss.getInt("NULLABLE"));//check whether column is null able
 						metaDataList.add(columnMeta);
 					}
 
@@ -152,29 +157,36 @@ public class DataGenRepoImpl implements DataGenRepo {
 
 	}
 
+	/**
+	 * Repository method for the getting table's foreign keys
+	 * @param tableName - Table name to retrieve keyword meta information
+	 */
 	public List<DbMetaData> getKeys(String tableName) throws SQLException {
 
 		ArrayList<DbMetaData> dbMetaData = new ArrayList<>();
-
+		
 		try (Connection con = jdbcTemplate.getDataSource().getConnection();
 				Connection con1 = jdbcTemplate.getDataSource().getConnection()) {
 
+			
 			DatabaseMetaData dbm = con.getMetaData();
 			DatabaseMetaData dbm1 = con1.getMetaData();
+			//fetch all the Foreign Key Columns and FK reference table related to table
 			ResultSet rs = dbm.getImportedKeys(null, "XENO", tableName);
 
 			while (rs.next()) {
 
 				dbMData = new DbMetaData();
 
-				dbMData.setFkParentTable(rs.getString("FKCOLUMN_NAME"));
-				dbMData.setFkParentTblName(rs.getString("PKTABLE_NAME"));
-
+				dbMData.setFkParentTable(rs.getString("FKCOLUMN_NAME"));//get the FK column name
+				dbMData.setFkParentTblName(rs.getString("PKTABLE_NAME"));//get the primary key table name
+				
+				//fetch the primary keys of FK reference table
 				ResultSet rs1 = dbm1.getPrimaryKeys(null, "XENO", dbMData.getFkParentTblName());
 
 				while (rs1.next()) {
-					dbMData.setPrimaryKey(rs1.getString("COLUMN_NAME"));
-					dbMData.setPrimaryKTble(rs1.getString("TABLE_NAME"));
+					dbMData.setPrimaryKey(rs1.getString("COLUMN_NAME"));//get the FK reference table's primary key column name
+					dbMData.setPrimaryKTble(rs1.getString("TABLE_NAME"));//get the FK reference table's table name
 
 				}
 
@@ -214,12 +226,17 @@ public class DataGenRepoImpl implements DataGenRepo {
 		return tableMeta;
 	}
 
+	/**
+	 * Insert the records into table
+	 * @param tableName - Table name that is want to get the records
+	 * @param columnName - column name
+	 */
 	@Override
 	public ArrayList<Object> insertFkTbleDta(String tableName, String columnName) {
 
 		ArrayList<Object> rows = new ArrayList<>();
 
-		String query = "Select " + columnName + " from xeno." + tableName + "";
+		String query = "Select " + columnName + " from xeno." + tableName + ""; //select the all column records of the mention table
 
 		return namedParameterJdbcTemplate.query(query, new ResultSetExtractor<ArrayList<Object>>() {
 
@@ -232,7 +249,7 @@ public class DataGenRepoImpl implements DataGenRepo {
 
 					while (rss.next()) {
 
-						rows.add(rss.getObject(columnName));
+						rows.add(rss.getObject(columnName));// add inserted column values to the array list
 
 					}
 
@@ -241,7 +258,7 @@ public class DataGenRepoImpl implements DataGenRepo {
 					logger.error("insertFkTbleDta(..) : ", e);
 				}
 
-				return rows;
+				return rows;//return array list object
 			}
 		});
 

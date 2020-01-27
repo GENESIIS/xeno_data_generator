@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author Nipuna
- *
+ * 20200127 RP XENO-94 - commenting
  */
 @Component
 @Scope("prototype")
 public class DbMetaData {
 	
-	private String fkParentTable;
-	private String fkParentTblName;
-	private String primaryKey;
-	private String primaryKTble;
+	private String fkParentTable;//fk column name of the table
+	private String fkParentTblName;//fk reference table name 
+	private String primaryKey;//pk column name of the fk reference table
+	private String primaryKTble;//pk table name of the fk reference table
 	
 	
 	
