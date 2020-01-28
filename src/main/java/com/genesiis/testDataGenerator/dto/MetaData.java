@@ -1,3 +1,8 @@
+/**
+ * Class to table column details column name, type, size etc... 
+ * @author Nipuna
+ * 20200128 RP XENO-94 - commenting
+ */
 package com.genesiis.testDataGenerator.dto;
 
 import org.springframework.context.annotation.Scope;
@@ -7,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class MetaData {
 	
-	private String columnName;
-	private String columnTypeName;
-	private int columnSize;
-	private String isAutoIncrement;
-	private int isNullable;
-	private int precision;
-	private int scale;
+	private String columnName;//column name of the table
+	private String columnTypeName;//column type
+	private int columnSize;//column size
+	private String isAutoIncrement;//is column auto incrementS
+	private int isNullable;//is column null able
+	private int precision;//number type column precision length
+	private int scale;//number type column scale length
 	
 	public String getColumnName() {
 		return columnName;

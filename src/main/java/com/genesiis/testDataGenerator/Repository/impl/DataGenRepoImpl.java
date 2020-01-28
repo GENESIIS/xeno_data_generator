@@ -3,6 +3,7 @@
  * 20191216 NJ XENO-94 - included dependency injection and removed default object creation and we-write a method to extract meta suing jdbc template
  * 20200106 NJ XENO-94 - changed a variable name of the gtFkTbleMetaDta(..)
  * 20200106 NJ XENO-94 - removed unused code and added loggers and exception handling
+ * 20200128 RP XENO-94 - commenting
  * */
 
 /**
@@ -44,16 +45,20 @@ public class DataGenRepoImpl implements DataGenRepo {
 	private MetaData columnMeta;
 	private static final Logger logger = LogManager.getLogger(DataGenRepoImpl.class);
 
+	/**
+	 * Get the table meta details (Column names, column types, null able etc ...) the user has entered
+	 * @param tableName - Name of table entered by the user
+	 */
 	@Override
 	public List<MetaData> getTbleMetaData(String tbleName) {
 
-		String query = "Select * from xeno." + tbleName + "";
+		String query = "Select * from xeno." + tbleName + ""; //Get all record from the table
 
 		return namedParameterJdbcTemplate.query(query, new ResultSetExtractor<List<MetaData>>() {
 
 			@Override
 			public List<MetaData> extractData(ResultSet rs) throws SQLException {
-				ArrayList<MetaData> metaDataList = new ArrayList<>();
+				ArrayList<MetaData> metaDataList = new ArrayList<>();//variable for the table meta data list
 
 				try {
 
@@ -61,13 +66,13 @@ public class DataGenRepoImpl implements DataGenRepo {
 					for (int i = 1; i < rsmd.getColumnCount() + 1; i++) {
 
 						columnMeta = new MetaData();
-						columnMeta.setColumnName(rsmd.getColumnName(i));
-						columnMeta.setColumnTypeName(rsmd.getColumnTypeName(i));
-						columnMeta.setColumnSize(rsmd.getColumnDisplaySize(i));
-						columnMeta.setAutoIncrement(Boolean.toString(rsmd.isAutoIncrement(i)));
-						columnMeta.setIsNullable(rsmd.isNullable(i));
-						columnMeta.setPrecision(rsmd.getPrecision(i));
-						columnMeta.setScale(rsmd.getScale(i));
+						columnMeta.setColumnName(rsmd.getColumnName(i));//column name 
+						columnMeta.setColumnTypeName(rsmd.getColumnTypeName(i));//column type
+						columnMeta.setColumnSize(rsmd.getColumnDisplaySize(i));//column size
+						columnMeta.setAutoIncrement(Boolean.toString(rsmd.isAutoIncrement(i)));//auto increment or not
+						columnMeta.setIsNullable(rsmd.isNullable(i));//null able or not
+						columnMeta.setPrecision(rsmd.getPrecision(i));//number column precision
+						columnMeta.setScale(rsmd.getScale(i));//number column scale
 
 						metaDataList.add(columnMeta);
 
@@ -78,7 +83,7 @@ public class DataGenRepoImpl implements DataGenRepo {
 					logger.error("getTbleMetaData(..) : ", e);
 				}
 
-				return metaDataList;
+				return metaDataList;//return column meta data list 
 			}
 		});
 
@@ -126,30 +131,40 @@ public class DataGenRepoImpl implements DataGenRepo {
 
 	}
 
+	/**
+	 * Repository class for the insert record to the table
+	 * @param args - Array of Column name string and values list string 
+	 * @param tableName- The Name of the table where want to insert the data
+	 */
 	@Override
 	public void insrtTextData(Object[] args, String tableName) {
 
 		try {
+			
+			String vals = args[1].toString();//get value list string
+			String query = "INSERT INTO xeno." + tableName + "(" + args[0].toString() + ")VALUES" + vals + "";//Insert string query
 
-			String vals = args[1].toString();
-			String query = "INSERT INTO xeno." + tableName + "(" + args[0].toString() + ")VALUES" + vals + "";
-
-			jdbcTemplate.batchUpdate(query);
+			jdbcTemplate.batchUpdate(query);//execute the insert statement
 
 		} catch (Exception e) {
 			logger.error("insrtTextData() : ", e);
 		}
 
 	}
-
+	
+	/**
+	 * Repository class for the insert record to the table
+	 * @param queyParams - Array of Column name string and values list string 
+	 * @param tableName- The Name of the table where you want to insert the data
+	 */
 	@Override
 	public void insrtData(String[] queryParams, String tableName) {
 
 		try {
-
+			//Create insert statement using the parsed values
 			String query = "INSERT INTO xeno." + tableName + "(" + queryParams[0] + ")VALUES" + queryParams[1] + "";
 
-			jdbcTemplate.batchUpdate(query);
+			jdbcTemplate.batchUpdate(query);//Insert the records
 
 		} catch (Exception e) {
 			logger.error("insrtData() : ", e);
@@ -163,7 +178,7 @@ public class DataGenRepoImpl implements DataGenRepo {
 	 */
 	public List<DbMetaData> getKeys(String tableName) throws SQLException {
 
-		ArrayList<DbMetaData> dbMetaData = new ArrayList<>();
+		ArrayList<DbMetaData> dbMetaData = new ArrayList<>();//variable for the store table meta data
 		
 		try (Connection con = jdbcTemplate.getDataSource().getConnection();
 				Connection con1 = jdbcTemplate.getDataSource().getConnection()) {
@@ -190,12 +205,12 @@ public class DataGenRepoImpl implements DataGenRepo {
 
 				}
 
-				dbMetaData.add(dbMData);
+				dbMetaData.add(dbMData);//add fetched FK and PK to dbMetaData list
 			}
 		} catch (Exception e) {
 			logger.error("getKeys(..) : ", e);
 		}
-		return dbMetaData;
+		return dbMetaData;//return the dbMetaData list
 	}
 
 	@Override
@@ -227,7 +242,7 @@ public class DataGenRepoImpl implements DataGenRepo {
 	}
 
 	/**
-	 * Insert the records into table
+	 * Get the inserted column values of the table
 	 * @param tableName - Table name that is want to get the records
 	 * @param columnName - column name
 	 */
@@ -247,7 +262,7 @@ public class DataGenRepoImpl implements DataGenRepo {
 						Statement stmt = con.createStatement();
 						ResultSet rss = stmt.executeQuery(query);) {
 
-					while (rss.next()) {
+					while (rss.next()) {//loop the fetched records
 
 						rows.add(rss.getObject(columnName));// add inserted column values to the array list
 

@@ -1,15 +1,13 @@
 /**
- * 
+ * Class to store the table foreign key related details 
+ * @author Nipuna
+ * 20200127 RP XENO-94 - commenting
  */
 package com.genesiis.testDataGenerator.dto;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Nipuna
- * 20200127 RP XENO-94 - commenting
- */
 @Component
 @Scope("prototype")
 public class DbMetaData {
